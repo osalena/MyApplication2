@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="56dp"
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp"
+    tools:context="com.example.myapplication.MainActivity"
+    android:orientation="vertical"
+    android:weightSum="1"
+    android:background="@color/colorMain">
+
+    <ImageView
+        android:id="@+id/hat_imageView"
+        android:layout_width="188dp"
+        android:layout_height="105dp"
+        android:layout_marginBottom="40dp"
+        android:layout_gravity="center_horizontal"
+        app:srcCompat="@drawable/hat"
+        tools:layout_editor_absoluteX="98dp"
+        tools:layout_editor_absoluteY="40dp" />
+
+
+    <TextView
+        android:id="@+id/main_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:gravity="center"
+        android:textSize="20dp"
+        android:text="@string/main_discover" />
+
+    <TextView
+        android:id="@+id/language_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        android:textSize="20dp"
+        android:text="@string/main_language"
+     />
+
+    <Spinner
+        android:id="@+id/language_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="309dp"
+        android:layout_marginBottom="30dp"
+        android:entries="@array/language_arrays"
+        android:prompt="@string/main_prompt"/>
+
+    <TextView
+        android:id="@+id/continue_textView"
+        android:autoLink="web"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        android:textSize="20dp"
+        android:text="@string/main_cont"
+        />
+
+</LinearLayout>

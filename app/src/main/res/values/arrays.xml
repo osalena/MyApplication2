@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <array name="images">
+    <item>@drawable/lion</item>
+    <item>@drawable/tiger</item>
+    <item>@drawable/elephant</item>
+    <item>@drawable/fox</item>
+ </array>
+
+    <array name="symbols">
+        <item>@drawable/heart</item>
+        <item>@drawable/bookmark</item>
+        <item>@drawable/send</item>
+    </array>
+
+  <string-array name="names">
+    <item>Lion</item>
+    <item>Tiger</item>
+    <item>Elephant</item>
+    <item>Fox</item>
+  </string-array>
+
+  <string-array name="descriptions">
+    <item>The lion (Panthera leo) is one of the big cats in the genus Panthera and a member of the family Felidae. The commonly used term African lion collectively denotes the several subspecies in Africa.</item>
+    <item>The tiger (Panthera tigris) is the largest cat species, most recognisable for their pattern of dark vertical stripes on reddish-orange fur with a lighter underside. The species is classified in the genus Panthera with the lion, leopard, jaguar and snow leopard. </item>
+    <item>Elephants are large mammals of the family Elephantidae and the order Proboscidea. Two species are traditionally recognised, the African elephant (Loxodonta africana) and the Asian elephant (Elephas maximus), although some evidence suggests that African bush elephants and African forest elephants are separate species</item>
+    <item>Foxes are small-to-medium-sized, omnivorous mammals belonging to several genera of the family Canidae. Foxes are slightly smaller than a medium-size domestic dog, with a flattened skull, upright triangular ears, a pointed, slightly upturned snout, and a long bushy tail (or brush).</item>
+ </string-array>
+
+    <string-array name="posters">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+    <string-array name="dates">
+        <item>1 years ago</item>
+        <item>2 years ago</item>
+        <item>3 years ago</item>
+        <item>4 years ago</item>
+    </string-array>
+
+
+</resources>

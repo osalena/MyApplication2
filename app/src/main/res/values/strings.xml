@@ -1,0 +1,56 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="main_discover">Discover and share the joy of cooking with your friends and family in Cookpad!</string>
+    <string name="main_language">Please choose your language</string>
+    <string name="main_cont">Continue</string>
+    <string name="main_prompt">select</string>
+    <string name="back">Back</string>
+    <string name="login_social">Continue with social</string>
+    <string name="login_or">or</string>
+    <string name="login_policy">By signing up, you agree to our
+        <a href="https://cookpad.com/us/terms">Terms of Service</a> and <a href="https://cookpad.com/us/privacy">Privacy Policy</a>
+    </string>
+    <string name="login_signup_with_email">Already registered with email? Log in</string>
+    <string name="login_email">Sing-up with email</string>
+    <string name="reg_showPassword">Show password</string>
+    <string name="reg_hidePassword">Mask password</string>
+    <string name="reg_createAcc">Sign Up</string>
+    <string name="reg_emptyToast">Please fill in all fields</string>
+    <string name="reg_passwordToast">Password is too shot (minimus is 6 characters)</string>
+    <string name="reg_emailToast">Email is invalid</string>
+
+
+    <string-array name="language_arrays">
+        <item>English</item>
+        <item>Italiano</item>
+        <item>Русский язык</item>
+    </string-array>
+    <string name="title_activity_login">Sign in</string>
+    <string name="title_activity_facebook_login">Facebook</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email or Phone</string>
+    <string name="prompt_password">Facebook Password</string>
+    <string name="action_sign_in">Log in</string>
+    <string name="action_sign_in_short">Log in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+
+    <string name="facebook_string">Log into your Facebook account to connect to Cookpad</string>
+    <string name="facebook_create_account">
+        <a href="https://m.facebook.com/r.php">Create Account</a>
+    </string>
+    <string name="facebook_back">Not now</string>
+
+    <!-- Strings related to login -->
+    <string name="main_activity">ACTIVITY</string>
+    <string name="main_trending">TRENDING</string>
+    <string name="main_nearby">NEARBY</string>
+    <!-- END Strings related to login -->
+
+</resources>

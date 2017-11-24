@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="10dp"
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp"
+    android:orientation="vertical"
+    android:background="@color/colorMain"
+    tools:context="com.example.myapplication.LoginActivity">
+
+    <TextView
+        android:id="@+id/back_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:gravity="center"
+        android:textSize="20dp"
+        android:text="@string/back" />
+
+    <ImageView
+        android:id="@+id/hat_imageView"
+        android:layout_width="188dp"
+        android:layout_height="105dp"
+        android:layout_marginBottom="20dp"
+        android:layout_gravity="center_horizontal"
+        app:srcCompat="@drawable/hat"
+        tools:layout_editor_absoluteX="98dp"
+        tools:layout_editor_absoluteY="40dp" />
+
+
+    <TextView
+        android:id="@+id/main_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:textSize="20dp"
+        android:text="@string/main_discover" />
+
+    <TextView
+        android:id="@+id/social_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:text="@string/login_social"
+        />
+
+ <LinearLayout
+     android:layout_width="fill_parent"
+     android:layout_height="40dp"
+     android:orientation="horizontal"
+     android:weightSum="2">
+     <Button
+         android:id="@+id/button"
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content"
+         android:layout_weight="1"
+         android:background="@drawable/facebook"/>
+
+     <Button
+         android:id="@+id/button2"
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content"
+         android:layout_weight="1"
+         android:background="@drawable/google"/>
+ </LinearLayout>
+
+    <TextView
+        android:id="@+id/continue_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        android:textSize="15dp"
+        android:text="@string/login_or"
+        />
+
+    <Button
+        android:id="@+id/email_button"
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:text="@string/login_email"/>
+
+    <TextView
+        android:id="@+id/signin_textView"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        android:textSize="20dp"
+        android:text="@string/login_signup_with_email"
+        />
+
+    <!-- Terms and Policy message -->
+    <TextView
+        android:id="@+id/continue_policy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        android:textSize="10dp"
+        android:text="@string/login_policy"
+        android:paddingEnd="5dp"/>
+
+
+
+
+</LinearLayout>
