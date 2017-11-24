@@ -22,6 +22,8 @@ public class AnimalsListFragment extends Fragment {
     private String[] mDescriptions;
     private String[] mPosters;
     private String[] mDates;
+    private String[] mLiked;
+    private String[] mCooked;
 
 
 
@@ -36,6 +38,8 @@ public class AnimalsListFragment extends Fragment {
         mDescriptions = resources.getStringArray(R.array.descriptions);
         mPosters = resources.getStringArray(R.array.posters);
         mDates = resources.getStringArray(R.array.dates);
+        mLiked = resources.getStringArray(R.array.liked);
+        mCooked = resources.getStringArray(R.array.cooked);
 
         // Get images.
         final TypedArray typedArray = resources.obtainTypedArray(R.array.images);
@@ -55,7 +59,7 @@ public class AnimalsListFragment extends Fragment {
         Activity activity = getActivity();
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new GridLayoutManager(activity, 1));
-        recyclerView.setAdapter(new AnimalsDataAdapter(activity, mImageResIds, mNames, mDescriptions, mPosters, mDates));
+        recyclerView.setAdapter(new AnimalsDataAdapter(activity, mImageResIds, mNames, mDescriptions, mPosters, mDates, mLiked, mCooked));
         return view;
     }
 

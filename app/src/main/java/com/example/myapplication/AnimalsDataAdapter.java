@@ -26,10 +26,13 @@ public  class AnimalsDataAdapter extends RecyclerView.Adapter<ViewHolder> {
     protected String[] mDescriptions;
     protected String[] mPosters;
     protected String[] mDates;
+    protected String[] mLiked;
+    protected String[] mCooked;
     protected Context context;
 
 
-    public AnimalsDataAdapter(Context context, int[] mImageResIds, String[] mNames, String[] mDescriptions, String[] mPosters, String[] mDates) {
+    public AnimalsDataAdapter(Context context, int[] mImageResIds, String[] mNames, String[] mDescriptions,
+                              String[] mPosters, String[] mDates, String[] mLiked, String[] mCooked) {
         mLayoutInflater = LayoutInflater.from(context);
         this.context = context;
         this.mImageResIds=mImageResIds;
@@ -37,6 +40,8 @@ public  class AnimalsDataAdapter extends RecyclerView.Adapter<ViewHolder> {
         this.mPosters = mPosters;
         this.mDescriptions = mDescriptions;
         this.mDates = mDates;
+        this.mLiked = mLiked;
+        this.mCooked = mCooked;
 
     }
 
@@ -53,7 +58,9 @@ public  class AnimalsDataAdapter extends RecyclerView.Adapter<ViewHolder> {
         final String description = mDescriptions[position];
         final String poster = mPosters[position];
         final String date = mDates[position];
-        viewHolder.setData(imageResId, name, poster, date);
+        final String liked = mLiked[position];
+        final String cooked = mCooked[position];
+        viewHolder.setData(imageResId, name, poster, date, liked, cooked);
 
         viewHolder.mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,7 +99,10 @@ class ViewHolder extends RecyclerView.ViewHolder {
     public TextView mPosterTextView;
     public TextView mDateTextView;
     public TextView mByCookTextView;
-    public ImageView mHeartImageView;
+    public ImageView mLogoImageView;
+    public TextView mLikedTextView;
+    public TextView mCookedTextView;
+
 
     public ViewHolder(View itemView) {
         super(itemView);
@@ -103,16 +113,21 @@ class ViewHolder extends RecyclerView.ViewHolder {
         mPosterTextView = (TextView) itemView.findViewById(R.id.poster);
         mDateTextView = (TextView) itemView.findViewById(R.id.date);
         mByCookTextView = (TextView) itemView.findViewById(R.id.by_cook);
-        mHeartImageView = (ImageView) itemView.findViewById(R.id.heart);
+        mLogoImageView = (ImageView) itemView.findViewById(R.id.user_image);
+        mLikedTextView = (TextView) itemView.findViewById(R.id.liked);
+        mCookedTextView = (TextView) itemView.findViewById(R.id.cooked);
+
     }
 
-    public void setData(int imageResId, String name, String poster, String date) {
+    public void setData(int imageResId, String name, String poster, String date, String liked, String cooked) {
         mImageView.setImageResource(imageResId);
         mNameTextView.setText(name);
         mPosterTextView.setText(poster);
         mDateTextView.setText(date);
         mByCookTextView.setText(poster);
-        mHeartImageView.setImageResource(R.drawable.heart);
+        mLogoImageView.setImageResource(imageResId);
+        mLikedTextView.setText(liked);
+        mCookedTextView.setText(cooked);
 
 
 

@@ -2,107 +2,176 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
-             android:layout_height="match_parent">
+             android:layout_height="wrap_content">
   <RelativeLayout
       android:layout_width="match_parent"
-      android:layout_height="match_parent">
-
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_centerInParent="true">
+        android:orientation="horizontal"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp">
 
       <LinearLayout
-          android:layout_width="fill_parent"
-          android:layout_height="wrap_content"
-          android:orientation="horizontal"
-          android:layout_gravity="top"
-          android:layout_alignParentTop="true">
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent">
 
-
-        <TextView
-            android:id="@+id/poster"
+        <ImageView
+            android:id="@+id/user_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="10dp"
-            android:layout_gravity="right"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:background="@color/colorLightblue"
-            tools:text=""/>
-
-        <TextView
-            android:id="@+id/cooked"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minHeight="10dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:background="@color/colorLightblue"
-            android:text="cooked"/>
-
-        <TextView
-            android:id="@+id/date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minHeight="10dp"
-            android:layout_gravity="right"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:background="@color/colorLightblue"
-            tools:text=""/>
+            android:maxWidth="50dp"
+            android:maxHeight="50dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop"
+            tools:src="@drawable/squarl"/>
 
 
       </LinearLayout>
 
-      <ImageView
-          android:id="@+id/animal_image"
+      <LinearLayout
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:layout_gravity="center"
-          android:adjustViewBounds="true"
-          android:contentDescription="@null"
-          android:scaleType="centerCrop"
-          tools:src="@drawable/squarl"/>
+          android:orientation="vertical"
+          android:layout_centerInParent="true">
 
-      <TextView
-          android:id="@+id/name"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_gravity="bottom"
-          android:minHeight="10dp"
-          android:paddingLeft="10dp"
-          android:paddingRight="10dp"
-          android:background="@color/colorLightblue"
-          tools:text=""/>
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="top"
+            android:layout_alignParentTop="true">
 
-      <TextView
-          android:id="@+id/by_cook"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_gravity="bottom"
-          android:minHeight="10dp"
-          android:paddingLeft="10dp"
-          android:paddingRight="10dp"
-          android:background="@color/colorLightblue"
-          tools:text=""/>
+
+          <TextView
+              android:id="@+id/poster"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:minHeight="10dp"
+              android:layout_gravity="right"
+              android:paddingLeft="10dp"
+              android:paddingRight="10dp"
+              android:background="@color/colorLightblue"
+              tools:text=""/>
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:minHeight="10dp"
+              android:paddingLeft="10dp"
+              android:paddingRight="10dp"
+              android:background="@color/colorLightblue"
+              android:text="cooked"/>
+
+          <TextView
+              android:id="@+id/date"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:minHeight="10dp"
+              android:layout_gravity="right"
+              android:paddingLeft="10dp"
+              android:paddingRight="10dp"
+              android:background="@color/colorLightblue"
+              tools:text=""/>
+
+
+        </LinearLayout>
+
         <ImageView
-            android:id="@+id/heart"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:id="@+id/animal_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:adjustViewBounds="true"
             android:contentDescription="@null"
             android:scaleType="centerCrop"
-            tools:src="@drawable/heart"/>
+            tools:src="@drawable/squarl"/>
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:minHeight="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:background="@color/colorLightblue"
+            tools:text=""/>
+
+        <TextView
+            android:id="@+id/by_cook"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:minHeight="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:background="@color/colorLightblue"
+            tools:text=""/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+          <TextView
+              android:id="@+id/liked"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:minHeight="10dp"
+              android:paddingLeft="10dp"
+              android:paddingRight="10dp"
+              android:background="@color/colorLightblue"
+              tools:text=""/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:background="@color/colorLightblue"
+                android:text="people liked"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+          <TextView
+              android:id="@+id/cooked"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:minHeight="10dp"
+              android:paddingLeft="10dp"
+              android:paddingRight="10dp"
+              android:background="@color/colorLightblue"
+              tools:text=""/>
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:minHeight="10dp"
+              android:paddingLeft="10dp"
+              android:paddingRight="10dp"
+              android:background="@color/colorLightblue"
+              android:text="people cooked"/>
+
+        </LinearLayout>
 
 
 
 
+      </LinearLayout>
 
     </LinearLayout>
+
+
+
 
 
   </RelativeLayout>

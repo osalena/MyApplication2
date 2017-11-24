@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <array name="images">
-    <item>@drawable/lion</item>
-    <item>@drawable/tiger</item>
-    <item>@drawable/elephant</item>
-    <item>@drawable/fox</item>
+    <item>@drawable/fried_corn</item>
+    <item>@drawable/chess_pie</item>
+    <item>@drawable/pecan_chocolate_chip_cookies</item>
+    <item>@drawable/black_beans</item>
  </array>
 
     <array name="symbols">
@@ -14,11 +14,25 @@
     </array>
 
   <string-array name="names">
-    <item>Lion</item>
-    <item>Tiger</item>
-    <item>Elephant</item>
-    <item>Fox</item>
+    <item>Fried Corn</item>
+    <item>Chess Pie</item>
+    <item>Pecan Chocolate Chip Cookies</item>
+    <item>Black Beans</item>
   </string-array>
+
+    <string-array name="liked">
+        <item>5</item>
+        <item>37</item>
+        <item>21</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="cooked">
+        <item>1</item>
+        <item>20</item>
+        <item>10</item>
+        <item>0</item>
+    </string-array>
 
   <string-array name="descriptions">
     <item>The lion (Panthera leo) is one of the big cats in the genus Panthera and a member of the family Felidae. The commonly used term African lion collectively denotes the several subspecies in Africa.</item>
@@ -28,10 +42,10 @@
  </string-array>
 
     <string-array name="posters">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
+        <item>Andy Smith</item>
+        <item>mooreyo70</item>
+        <item>Jenny Glay</item>
+        <item>Mikey Aticus</item>
     </string-array>
 
     <string-array name="dates">
