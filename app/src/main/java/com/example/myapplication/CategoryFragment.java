@@ -1,7 +1,13 @@
 package com.example.myapplication;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,12 +17,30 @@ import android.widget.TextView;
 
 public class CategoryFragment extends Fragment{
 
+    private String[] mCategories;
 
-    public CategoryFragment() {
-        // Required empty public constructor
+
+    @Override
+    public void onAttach(Activity context) {
+        super.onAttach(context);
+
+        // Get  names and descriptions.
+        final Resources resources = context.getResources();
+        mCategories = resources.getStringArray(R.array.categories);
+
     }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.category_list, container, false);
+        Activity activity = getActivity();
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.category_recycle);
+        recyclerView.setLayoutManager(new LinearLayoutManager(activity,LinearLayoutManager.HORIZONTAL, false));
+        recyclerView.setAdapter(new CategoryDataAdapter(activity, mCategories));
+        return view;
+    }
 
+/*
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -27,9 +51,9 @@ public class CategoryFragment extends Fragment{
 
         Bundle args = getArguments();
         if(args!=null) {
-            String no = String.valueOf(args.getInt("no"));
+            String no = String.valueOf(args.getString("category"));
             noTextView.setText(no);
         }
         return view;
-    }
+    } */
 }

@@ -32,16 +32,23 @@ public class activity_main_cookpad extends AppCompatActivity{
     private void getCategories() {
 
         FragmentManager categoryManager = getFragmentManager();
-        Bundle argsCat = new Bundle();
-        argsCat.putInt("no", 555);
-        argsCat.putString("name", "Israel Israel");
+        //Bundle argsCat = new Bundle();
+        //argsCat.putInt("no", 555);
+        //argsCat.putStringArray("category", getResources().getStringArray(R.array.categories));
+        //argsCat.putString("name", "Israel Israel");
         CategoryFragment fragmentCat= new CategoryFragment();
-        fragmentCat.setArguments(argsCat);
+       // fragmentCat.setArguments(argsCat);
         FragmentTransaction tCat= categoryManager.beginTransaction();
         tCat.add(R.id.category_layoutt, fragmentCat);
         tCat.addToBackStack(null);
         tCat.commit();
 
+        FragmentManager fm = getFragmentManager();
+        AnimalsListFragment fragmet2= new AnimalsListFragment();
+        FragmentTransaction t= fm.beginTransaction();
+        t.replace(R.id.root_layout, fragmet2);
+        t.addToBackStack(null);
+        t.commit();
     }
 
 

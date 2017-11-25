@@ -53,6 +53,7 @@
     <string name="main_nearby">NEARBY</string>
     <!-- END Strings related to login -->
     <string name="main_search_hint">What do you want to search?</string>
+    <string name="cookpad_category">categories</string>
 
 
 </resources>

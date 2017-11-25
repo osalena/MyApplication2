@@ -55,5 +55,14 @@
         <item>4 years ago</item>
     </string-array>
 
+    <string-array name="categories">
+        <item>dessert</item>
+        <item>breakfast</item>
+        <item>lunch</item>
+        <item>snuck</item>
+        <item>dinner</item>
+        <item>categories</item>
+    </string-array>
+
 
 </resources>
