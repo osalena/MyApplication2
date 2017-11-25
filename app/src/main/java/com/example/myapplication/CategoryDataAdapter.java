@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,11 +14,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class CategoryDataAdapter extends RecyclerView.Adapter<CategoryViewHolder>{
 
     private LayoutInflater mLayoutInflater;
+
 
 
     protected String[] mCategories;
@@ -42,11 +46,14 @@ public class CategoryDataAdapter extends RecyclerView.Adapter<CategoryViewHolder
         final String category = mCategories[position];
         viewHolder.setData(category);
 
+
         viewHolder.mCategory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                //TO DO
+                if(category.equals("categories")){
+                    Intent intent = new Intent(context, Category_list.class);
+                    context.startActivity(intent);
+               }
 
             }
         });

@@ -29,7 +29,8 @@
             android:name=".activity_facebook_login"
             android:label="@string/title_activity_facebook_login" />
         <activity android:name=".activity_main_cookpad" />
-        <activity android:name=".activity_signIn"></activity>
+        <activity android:name=".activity_signIn" />
+        <activity android:name=".Category_list"></activity>
     </application>
 
 </manifest>
