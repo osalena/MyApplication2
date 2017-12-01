@@ -55,5 +55,10 @@
     <string name="main_search_hint">What do you want to search?</string>
     <string name="cookpad_category">categories</string>
 
+    <!--action bar-->
+    <string name="ab_cookPad">My Recipies</string>
+    <string name="ab_notification">My Notifications</string>
+    <string name="ab_chart">My Chart</string>
+
 
 </resources>

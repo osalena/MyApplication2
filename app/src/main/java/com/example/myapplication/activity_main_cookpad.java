@@ -1,18 +1,25 @@
 package com.example.myapplication;
 
+
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
 
-public class activity_main_cookpad extends AppCompatActivity{
+public class activity_main_cookpad extends AppCompatActivity {
 
     private Button trending;
     private SearchView searchView;
+    //private ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +32,16 @@ public class activity_main_cookpad extends AppCompatActivity{
         //searchView.setIconified(false);
         searchView.onActionViewExpanded();
         searchView.clearFocus();
+
+        ActionBar actionBar = null;
+
+        //actionBar.setTitle(null);
+        //actionBar.setDisplayHomeAsUpEnabled(true);
+        //actionBar.setHomeButtonEnabled(true);
+        //actionBar.setIcon(null)
+
+
+        //hideKeyboard();
 
 
     }
@@ -49,6 +66,63 @@ public class activity_main_cookpad extends AppCompatActivity{
         t.replace(R.id.root_layout, fragmet2);
         t.addToBackStack(null);
         t.commit();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+      /*  switch (item.getItemId()) {
+            case R.id.menuitem_search: {
+                FindFragment findFragment = new FindFragment();
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.replace(R.id.rootview, findFragment);
+                ft.commit();
+                Toast.makeText(this, getString(R.string.ui_menu_search),
+                        Toast.LENGTH_SHORT).show();
+
+                return true;
+            }
+            case R.id.menuitem_send:
+                Toast.makeText(this, getString(R.string.ui_menu_send),
+                        Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.menuitem_add:
+                Toast.makeText(this, getString(R.string.ui_menu_add),
+                        Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.menuitem_share:
+                Toast.makeText(this, getString(R.string.ui_menu_share),
+                        Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.menuitem_feedback: {
+                ChatFragment chatFragment = new ChatFragment();
+                FragmentTransaction ftransaction = fm.beginTransaction();
+                ftransaction.replace(R.id.rootview, chatFragment);
+                ftransaction.commit();
+
+                Toast.makeText(this, getString(R.string.ui_menu_feedback),
+                        Toast.LENGTH_SHORT).show();
+                return true;
+            }
+            case R.id.menuitem_about:
+                Intent intent = new Intent(this,AboutActivity.class);
+                startActivity(intent);
+                Toast.makeText(this, getString(R.string.ui_menu_about),
+                        Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.menuitem_quit:
+                Toast.makeText(this, getString(R.string.ui_menu_quit),
+                        Toast.LENGTH_SHORT).show();
+                finish(); // close the activity
+                return true;
+        } */
+        return false;
     }
 
 
@@ -76,6 +150,19 @@ public class activity_main_cookpad extends AppCompatActivity{
         t.addToBackStack(null);
         t.commit();
     }
+
+    //doesn't work
+    /*private void hideKeyboard() {
+        try {
+            View view = this.getCurrentFocus();
+            if (view != null) {
+                final InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }*/
 
 
 }
