@@ -89,7 +89,7 @@ public class MyDataBase extends SQLiteOpenHelper {
         //onCreate(db);
     }
 
-    public void createReceipt(InfoReceipt user,InfoReceipt receipt) {
+    public void createReceipt(InfoUser user,InfoReceipt receipt) {
 
         try {
             // make values to be inserted
@@ -447,11 +447,11 @@ public class MyDataBase extends SQLiteOpenHelper {
     }
 
 
-    public List<InfoReceipt> getAllItemsOfFolder(InfoReceipt folder) {
+    public List<InfoReceipt> getAllReceiptsOfUser(InfoUser user) {
         List<InfoReceipt> result = new ArrayList<InfoReceipt>();
         Cursor cursor = null;
         try {
-            int floderId = folder.getId();
+            int floderId = user.getId();
             cursor = db.query(TABLE_RECEIPTS_NAME, TABLE_RECEIPT_COLUMNS, RECEIPT_COLUMN_USERID +" = ?",
                     new String[] { String.valueOf(floderId) }, null, null,
                     null, null);

@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.ReceiptDetails;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -8,7 +8,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class AnimalDetailsFragment extends Fragment {
+import com.example.myapplication.R;
+
+public class ReceiptDetailsFragment extends Fragment {
 
   public static final String ARGUMENT_IMAGE_RES_ID = "imageResId";
   public static final String ARGUMENT_NAME = "name";

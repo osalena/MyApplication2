@@ -59,6 +59,12 @@
     <string name="ab_cookPad">My Recipies</string>
     <string name="ab_notification">My Notifications</string>
     <string name="ab_chart">My Chart</string>
+    <string name="save">Save</string>
+
+    <string name="cr_recipe_title">Recipe Title</string>
+    <string name="cr_recipe_description">Description</string>
+
+
 
 
 </resources>

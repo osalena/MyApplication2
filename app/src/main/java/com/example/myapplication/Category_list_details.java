@@ -3,7 +3,7 @@ package com.example.myapplication;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class Category_list extends AppCompatActivity {
+public class Category_list_details extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

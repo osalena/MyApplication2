@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+  <!-- <item
+        android:id="@+id/notification_iconn"
+        app:showAsAction="always|ifRoom"
+        android:icon="@drawable/echo_bell"
+        android:title="@string/ab_notification"/>-->
+    <item
+        android:id="@+id/cook_pad_icon"
+        app:showAsAction="always"
+        android:icon="@drawable/hat"
+        android:title="@string/ab_cookPad"/>
+
+
+</menu>

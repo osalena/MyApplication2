@@ -1,39 +1,48 @@
-package com.example.myapplication;
+package com.example.myapplication.ReceiptsList;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-/**
- * Created by admin on 11/22/2016.
- */
+import com.example.myapplication.R;
+import com.example.myapplication.dataBase.InfoReceipt;
 
-public  class AnimalsDataAdapter extends RecyclerView.Adapter<ViewHolder> {
-
-    private LayoutInflater mLayoutInflater;
+import java.util.List;
 
 
-    protected int[] mImageResIds;
+public  class ReceiptsDataAdapter extends ArrayAdapter<InfoReceipt> {
+
+    //private LayoutInflater mLayoutInflater;
+
+
+   /* protected int[] mImageResIds;
     protected String[] mNames;
     protected String[] mDescriptions;
     protected String[] mPosters;
     protected String[] mDates;
     protected String[] mLiked;
-    protected String[] mCooked;
+    protected String[] mCooked; */
     protected Context context;
 
+    private List<InfoReceipt> receipts;
 
-    public AnimalsDataAdapter(Context context, int[] mImageResIds, String[] mNames, String[] mDescriptions,
-                              String[] mPosters, String[] mDates, String[] mLiked, String[] mCooked) {
-        mLayoutInflater = LayoutInflater.from(context);
+
+    public ReceiptsDataAdapter(Context context, int resource, List<InfoReceipt> objects) {
+        super(context, resource, objects);
+        this.context = context;
+        receipts = objects;
+        /*mLayoutInflater = LayoutInflater.from(context);
         this.context = context;
         this.mImageResIds=mImageResIds;
         this.mNames = mNames;
@@ -41,10 +50,91 @@ public  class AnimalsDataAdapter extends RecyclerView.Adapter<ViewHolder> {
         this.mDescriptions = mDescriptions;
         this.mDates = mDates;
         this.mLiked = mLiked;
-        this.mCooked = mCooked;
+        this.mCooked = mCooked; */
 
     }
 
+    @Override
+    public int getCount() {
+        return receipts.size();
+    }
+
+    @Override
+    public View getView(int position, View view, ViewGroup parent) {
+
+        LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+        View rootView = mInflater.inflate(R.layout.recycler_item, null);
+        final InfoReceipt currentReceipt = getItem(position);
+        TextView title = (TextView) rootView.findViewById(R.id.name);
+        title.setText(currentReceipt.getTitle());
+        ImageView receiptImage = (ImageView) rootView.findViewById(R.id.animal_image);
+        receiptImage.setImageBitmap(currentReceipt.getImage1());
+        ImageView userImage = (ImageView) rootView.findViewById(R.id.user_image);
+        //TO DO
+        userImage.setImageBitmap(null);
+        TextView poster = (TextView) rootView.findViewById(R.id.poster);
+        //TO DO
+        poster.setText(null);
+        TextView date = (TextView) rootView.findViewById(R.id.date);
+        //TO DO
+        date.setText(null);
+        TextView by_cook = (TextView) rootView.findViewById(R.id.by_cook);
+        //TO DO
+        by_cook.setText(null);
+        TextView liked = (TextView) rootView.findViewById(R.id.liked);
+        //TO DO
+        liked.setText(null);
+        TextView cooked = (TextView) rootView.findViewById(R.id.cooked);
+        //TO DO
+        cooked.setText(null);
+
+
+
+
+
+/*
+        ImageView deleteIcon = (ImageView) rootView.findViewById(R.id.deleteIcon);
+        deleteIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final String title = "Delete Folder";
+                final String msg = "Are you sure?";
+                AlertDialog.Builder  builder=  new AlertDialog.Builder(context);
+                builder.setTitle(title);
+                builder.setMessage(msg);
+
+                builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        MyInfoManager.getInstance().deleteFolder(currentFolder);
+                        InfoFolderListAdapter.this.remove(currentFolder);
+                        InfoFolderListAdapter.this.notifyDataSetChanged();
+                    }
+                });
+
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    }
+                });
+
+                AlertDialog alertDialog = builder.create();
+                alertDialog .show();
+            }
+        }); */
+
+
+        return rootView;
+    }
+
+
+
+
+    @Override
+    public InfoReceipt getItem(int position) {
+        return receipts.get(position);
+    }
+
+
+    /*
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         return new ViewHolder(mLayoutInflater.inflate(R.layout.recycler_item, viewGroup, false));
@@ -131,7 +221,7 @@ class ViewHolder extends RecyclerView.ViewHolder {
 
 
 
-    }
+    } */
 }
 
 

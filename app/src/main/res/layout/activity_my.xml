@@ -79,5 +79,15 @@
         android:layout_weight="3">
 
     </FrameLayout>
+    
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/myFAB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        app:elevation="4dp"
+        app:backgroundTint="@color/colorOrange"
+        android:src="@drawable/ic_add_black_24dp"
+        android:onClick="createNewReceiptOnClick"/>
 
 </LinearLayout>

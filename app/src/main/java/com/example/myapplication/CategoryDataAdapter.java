@@ -51,7 +51,7 @@ public class CategoryDataAdapter extends RecyclerView.Adapter<CategoryViewHolder
             @Override
             public void onClick(View v) {
                 if(category.equals("categories")){
-                    Intent intent = new Intent(context, Category_list.class);
+                    Intent intent = new Intent(context, Category_list_details.class);
                     context.startActivity(intent);
                }
 

@@ -4,7 +4,9 @@ package com.example.myapplication;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -13,27 +15,38 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
+import com.example.myapplication.ReceiptsList.ReceiptsListFragment;
+import com.example.myapplication.dataBase.MyInfoManager;
 
 
 public class activity_main_cookpad extends AppCompatActivity {
 
-    private Button trending;
-    private SearchView searchView;
-    //private ActionBar actionBar;
+    private Button               trending;
+    private SearchView           searchView;
+    private FloatingActionButton actionButton;
+    private ActionBar            actionBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
+
+        trending        =   (Button)findViewById(R.id.btn2);
+        searchView      =   (SearchView)findViewById(R.id.search);
+        actionButton    =   (FloatingActionButton)findViewById(R.id.myFAB);
+
+        /* to display Category List */
         getCategories();
-        trending    =   (Button)findViewById(R.id.btn2);
         trending.callOnClick();
-        searchView = (SearchView)findViewById(R.id.search);
         //searchView.setIconified(false);
         searchView.onActionViewExpanded();
         searchView.clearFocus();
 
-        ActionBar actionBar = null;
+        //to get DB
+        MyInfoManager.getInstance().openDataBase(this);
 
         //actionBar.setTitle(null);
         //actionBar.setDisplayHomeAsUpEnabled(true);
@@ -45,6 +58,8 @@ public class activity_main_cookpad extends AppCompatActivity {
 
 
     }
+
+
 
     private void getCategories() {
 
@@ -61,7 +76,7 @@ public class activity_main_cookpad extends AppCompatActivity {
         tCat.commit();
 
         FragmentManager fm = getFragmentManager();
-        AnimalsListFragment fragmet2= new AnimalsListFragment();
+        ReceiptsListFragment fragmet2= new ReceiptsListFragment();
         FragmentTransaction t= fm.beginTransaction();
         t.replace(R.id.root_layout, fragmet2);
         t.addToBackStack(null);
@@ -125,6 +140,12 @@ public class activity_main_cookpad extends AppCompatActivity {
         return false;
     }
 
+    public void createNewReceiptOnClick (View view) {
+        //Toast.makeText(getApplicationContext(), "dfdf", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(activity_main_cookpad.this, CreateReceiptActivity.class);
+        activity_main_cookpad.this.startActivity(intent);
+    }
+
 
     public void showFragment1OnClick(View view) {
 
@@ -144,9 +165,9 @@ public class activity_main_cookpad extends AppCompatActivity {
 
     public void showFragment2OnClick(View view) {
         FragmentManager fm = getFragmentManager();
-        AnimalsListFragment fragmet2= new AnimalsListFragment();
+        ReceiptsListFragment fragmet2= new ReceiptsListFragment();
         FragmentTransaction t= fm.beginTransaction();
-        t.replace(R.id.root_layout, fragmet2);
+        t.replace(R.id.root_layout, fragmet2, "fragment");
         t.addToBackStack(null);
         t.commit();
     }
@@ -164,5 +185,18 @@ public class activity_main_cookpad extends AppCompatActivity {
         }
     }*/
 
+
+    @Override
+    protected void onResume() {
+        MyInfoManager.getInstance().openDataBase(this);
+        super.onResume();
+
+    }
+
+    @Override
+    protected void onPause() {
+        MyInfoManager.getInstance().closeDataBase();
+        super.onPause();
+    }
 
 }

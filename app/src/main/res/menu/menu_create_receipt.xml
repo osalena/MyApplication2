@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:contex=".CreateReceiptActivity">
+  <!-- <item
+        android:id="@+id/notification_iconn"
+        app:showAsAction="always|ifRoom"
+        android:icon="@drawable/echo_bell"
+        android:title="@string/ab_notification"/>-->
+
+  <item
+      android:id="@+id/create_rec_save"
+      app:showAsAction="always"
+      android:onClick="onOptionsItemSelected"
+      android:title="@string/save"/>
+
+    <item
+        android:id="@+id/create_rec_hat"
+        app:showAsAction="always"
+        android:icon="@drawable/hat"
+        android:title="@string/ab_cookPad"/>
+
+
+</menu>
