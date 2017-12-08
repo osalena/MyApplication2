@@ -3,7 +3,10 @@ package com.example.myapplication;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -21,7 +24,10 @@ import com.example.myapplication.dataBase.InfoReceipt;
 import com.example.myapplication.dataBase.InfoUser;
 import com.example.myapplication.dataBase.MyInfoManager;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class CreateReceiptActivity extends AppCompatActivity implements View.OnClickListener{
@@ -31,10 +37,15 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
     private EditText    editTextTitle;
     private EditText    editTextDescription;
     private Bitmap      bitmap = null;
+    private File        output=null;
     private InfoUser    user;
 
+
     //private ActionBar actionBar;
-    public static final int GET_FROM_GALLERY = 1;
+    public  static final int GET_FROM_GALLERY = 1;
+    private static final int REQUEST_TAKE_PHOTO = 111;
+    private static final int PHOTO_W = 500;
+    private static final int PHOTO_H = 300;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +61,9 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
         editTextDescription = (EditText)findViewById(R.id.editTextRecipeDescription);
         editTextTitle       = (EditText)findViewById(R.id.editTextRecipeTitle);
         imageView.setOnClickListener(this);
-        loadImageButton.setOnClickListener(this);
+        loadImageButton.setOnClickListener(cameraOnClickListener);
 
-        user = new InfoUser("Alena", null, "123");
+        user = new InfoUser("Test", null, "123");
     }
 
 
@@ -70,13 +81,15 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
                 onBackPressed();
                 return true;
             case R.id.create_rec_hat:
-                Toast.makeText(getApplicationContext(), "ghjgkhjg", Toast.LENGTH_SHORT);
-               // createNewReceipt();
+                //Toast.makeText(getApplicationContext(), "ghjgkhjg", Toast.LENGTH_SHORT);
+                //createNewReceipt();
                 //Intent intent = new Intent(CreateReceiptActivity.this, activity_main_cookpad.class);
                 //CreateReceiptActivity.this.startActivity(intent);
                 return true;
             case R.id.create_rec_save:
-
+                InfoReceipt receipt = new InfoReceipt(editTextTitle.getText().toString(), editTextDescription.getText().toString(), bitmap);
+                MyInfoManager.getInstance().createReceipt(user, receipt);
+                Toast.makeText(CreateReceiptActivity.this, getResources().getText(R.string.cr_recipe_save), Toast.LENGTH_SHORT).show();
                 return true;
 
             default:
@@ -84,11 +97,25 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
         }
     }
 
-    private void createNewReceipt() {
-        InfoReceipt receipt = new InfoReceipt(editTextTitle.getText().toString(), editTextDescription.getText().toString(), bitmap);
-        MyInfoManager.getInstance().createReceipt(user, receipt);
-        //Toast.makeText(this, "ghjgkhjg", Toast.LENGTH_SHORT);
-    }
+    private View.OnClickListener cameraOnClickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View arg0) {
+
+            Intent i=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            File dir= Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String imageFileName = "img_" + timeStamp + ".jpeg";
+            output=new File(dir, imageFileName);
+            i.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(output));
+
+            startActivityForResult(i, REQUEST_TAKE_PHOTO);
+
+        }
+    };
+
+
 
    /* public void openGalleryOnClick (View view){
         //startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI),
@@ -136,8 +163,25 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
                     }
                     imageView.setImageBitmap(bitmap);
                 }
-           // else if (requestCode == REQUEST_CAMERA)
-             //   onCaptureImageResult(data);
+           else if (requestCode == REQUEST_TAKE_PHOTO){
+                    try {
+
+                            bitmap =  getScaledImageFromFilePath(output.getAbsolutePath());
+                            if(bitmap!=null){
+                                //imageView.setImageBitmap(bitmap);
+                                //imageView.setVisibility(View.VISIBLE);
+                                imageView.setImageResource(R.drawable.bookmark);
+                            }
+                            else if (bitmap == null){
+                                imageView.setImageBitmap(null);
+                            }
+
+
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
+                }
+
         }
     }
 
@@ -186,5 +230,36 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
                 break;
         }
 
+    }
+
+    @Override
+    protected void onResume() {
+        MyInfoManager.getInstance().openDataBase(this);
+        super.onResume();
+
+    }
+
+    @Override
+    protected void onPause() {
+        MyInfoManager.getInstance().closeDataBase();
+        super.onPause();
+    }
+
+    private Bitmap getScaledImageFromFilePath(String imagePath) {
+        // Get the dimensions of the View
+        Bitmap scaledBitmap = null;
+        try {
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+
+            Matrix matrix = new Matrix();
+            matrix.postRotate(90);
+
+            Bitmap rotatedBitmap =  Bitmap.createScaledBitmap(bitmap, PHOTO_W, PHOTO_H, false);
+            scaledBitmap = Bitmap.createBitmap(rotatedBitmap , 0, 0, rotatedBitmap.getWidth(), rotatedBitmap.getHeight(), matrix, true);
+
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return scaledBitmap;
     }
 }

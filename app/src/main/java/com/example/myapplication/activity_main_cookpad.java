@@ -92,7 +92,14 @@ public class activity_main_cookpad extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-      /*  switch (item.getItemId()) {
+        switch (item.getItemId()){
+            case R.id.cook_pad_icon:{
+                Intent intent = new Intent(activity_main_cookpad.this, MyReceiptsActivity.class);
+                activity_main_cookpad.this.startActivity(intent);
+                return true;
+            }
+        }
+      /* switch (item.getItemId()) {
             case R.id.menuitem_search: {
                 FindFragment findFragment = new FindFragment();
                 FragmentTransaction ft = fm.beginTransaction();

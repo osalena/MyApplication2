@@ -147,6 +147,7 @@ public class MyDataBase extends SQLiteOpenHelper {
 
     }
 
+
     public InfoReceipt readReceipt(int id) {
         InfoReceipt receipt = null;
         Cursor cursor = null;
@@ -193,6 +194,50 @@ public class MyDataBase extends SQLiteOpenHelper {
             }
         }
         return receipt;
+    }
+
+    public InfoUser readUserByUserName(String userName) {
+        InfoUser user = null;
+        Cursor cursor = null;
+        try {
+            // get reference of the folderDB database
+
+            // get  query
+            cursor = db
+                    .query(TABLE_USERS_NAME, // a. table
+                            TABLE_USER_COLUMNS, USERS_COLUMN_USERNAME + " = ?",
+                            new String[] { userName }, null, null,
+                            null, null);
+
+            // if results !=null, parse the first one
+            if (cursor != null)
+                cursor.moveToFirst();
+
+            user = new InfoUser();
+            user.setId(Integer.parseInt(cursor.getString(0)));
+            user.setUsername(cursor.getString(1));
+
+            //images
+            byte[] img1Byte = cursor.getBlob(2);
+            if (img1Byte != null && img1Byte.length > 0) {
+                Bitmap image1 = BitmapFactory.decodeByteArray(img1Byte, 0, img1Byte.length);
+                if (image1 != null) {
+                    user.setImage1(image1);
+                }
+                else user.setImage1(null);
+            }
+
+            user.setPassword(cursor.getString(3));
+
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+        finally {
+            if(cursor!=null){
+                cursor.close();
+            }
+        }
+        return user;
     }
 
     public InfoUser readUser(int id) {

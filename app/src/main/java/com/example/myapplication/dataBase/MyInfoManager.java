@@ -21,6 +21,10 @@ public class MyInfoManager {
         return instance;
     }
 
+    public MyDataBase getDB(){
+        return db;
+    }
+
     public static void releaseInstance() {
         if (instance != null) {
             instance.clean();
@@ -59,6 +63,15 @@ public class MyInfoManager {
             db.createReceipt(user, receipt);
         }
     }
+
+    public InfoUser readUserByUserName(String userName) {
+        if (db != null) {
+            InfoUser u = db.readUserByUserName(userName);
+            return u;
+        }
+        return null;
+    }
+
 
     public void createUser(InfoUser user) {
         if (db != null) {

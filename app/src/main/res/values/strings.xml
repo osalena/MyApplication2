@@ -63,8 +63,7 @@
 
     <string name="cr_recipe_title">Recipe Title</string>
     <string name="cr_recipe_description">Description</string>
-
-
+    <string name="cr_recipe_save">Your receipt was saved.</string>
 
 
 </resources>

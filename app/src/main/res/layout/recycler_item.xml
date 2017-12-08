@@ -162,19 +162,46 @@
               android:text="people cooked"/>
 
         </LinearLayout>
-
-         <!--<ImageView
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+          <ImageView
               android:id="@+id/like_icon"
-              android:layout_width="20dp"
-              android:layout_height="20dp"
+              android:layout_width="15dp"
+              android:layout_height="30dp"
+              android:clickable="true"
+              android:layout_gravity="left"
+              android:layout_marginEnd="15dp"
+              android:layout_weight="0.10"
+              android:src="@drawable/heart" />
+          <ImageView
+              android:id="@+id/bookmark_icon"
+              android:layout_width="15dp"
+              android:layout_height="30dp"
               android:layout_alignParentEnd="true"
               android:layout_alignParentStart="false"
               android:layout_centerVertical="true"
               android:clickable="true"
-              android:layout_gravity="center_vertical|end"
+              android:layout_gravity="center_vertical"
               android:layout_marginEnd="15dp"
-              android:scaleType="fitXY"
-              android:src="@drawable/heart" />-->
+              android:layout_weight="0.10"
+              android:src="@drawable/bookmark"/>
+          <ImageView
+              android:id="@+id/send_icon"
+              android:layout_width="15dp"
+              android:layout_height="30dp"
+              android:layout_centerVertical="true"
+              android:clickable="true"
+              android:layout_gravity="right"
+              android:layout_weight="0.10"
+              android:src="@drawable/send"/>
+
+
+        </LinearLayout>
+
+
 
 
 

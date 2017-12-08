@@ -7,11 +7,6 @@
     <item>@drawable/black_beans</item>
  </array>
 
-    <array name="symbols">
-        <item>@drawable/heart</item>
-        <item>@drawable/bookmark</item>
-        <item>@drawable/send</item>
-    </array>
 
   <string-array name="names">
     <item>Fried Corn</item>

@@ -1,61 +1,33 @@
-package com.example.myapplication.ReceiptsList;
+package com.example.myapplication;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.myapplication.R;
 import com.example.myapplication.dataBase.InfoReceipt;
+import com.example.myapplication.dataBase.MyInfoManager;
 
 import java.util.List;
 
 
-public  class ReceiptsDataAdapter extends ArrayAdapter<InfoReceipt> {
+public class MyReceiptsDataAdapter extends ArrayAdapter {
 
-    //private LayoutInflater mLayoutInflater;
-
-
-   /* protected int[] mImageResIds;
-    protected String[] mNames;
-    protected String[] mDescriptions;
-    protected String[] mPosters;
-    protected String[] mDates;
-    protected String[] mLiked;
-    protected String[] mCooked; */
-    private ImageView   likeImage;
-    private ImageView   bookmarkedImage;
-    private ImageView   sendImage;
-    protected Context   context;
+    protected Context context;
 
     private List<InfoReceipt> receipts;
 
 
-    public ReceiptsDataAdapter(Context context, int resource, List<InfoReceipt> objects) {
+    public MyReceiptsDataAdapter(Context context, int resource, List<InfoReceipt> objects) {
         super(context, resource, objects);
         this.context = context;
         receipts = objects;
-        /*mLayoutInflater = LayoutInflater.from(context);
-        this.context = context;
-        this.mImageResIds=mImageResIds;
-        this.mNames = mNames;
-        this.mPosters = mPosters;
-        this.mDescriptions = mDescriptions;
-        this.mDates = mDates;
-        this.mLiked = mLiked;
-        this.mCooked = mCooked; */
-
     }
 
     @Override
@@ -67,68 +39,51 @@ public  class ReceiptsDataAdapter extends ArrayAdapter<InfoReceipt> {
     public View getView(int position, View view, ViewGroup parent) {
 
         LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-        View rootView = mInflater.inflate(R.layout.recycler_item, null);
+        View rootView = mInflater.inflate(R.layout.my_receipts_layout, null);
         final InfoReceipt currentReceipt = getItem(position);
-        TextView title = (TextView) rootView.findViewById(R.id.name);
+        TextView title = (TextView) rootView.findViewById(R.id.my_rec_title);
         title.setText(currentReceipt.getTitle());
-        ImageView receiptImage = (ImageView) rootView.findViewById(R.id.animal_image);
-        receiptImage.setImageBitmap(currentReceipt.getImage1());
-        ImageView userImage = (ImageView) rootView.findViewById(R.id.user_image);
+        //ImageView receiptImage = (ImageView) rootView.findViewById(R.id.animal_image);
+        //receiptImage.setImageBitmap(currentReceipt.getImage1());
+        //ImageView userImage = (ImageView) rootView.findViewById(R.id.user_image);
         //TO DO
-        userImage.setImageBitmap(null);
-        TextView poster = (TextView) rootView.findViewById(R.id.poster);
+       // userImage.setImageBitmap(null);
+        //TextView poster = (TextView) rootView.findViewById(R.id.poster);
         //TO DO
-        poster.setText(null);
-        TextView date = (TextView) rootView.findViewById(R.id.date);
+        //poster.setText(null);
+        //TextView date = (TextView) rootView.findViewById(R.id.date);
         //TO DO
-        date.setText(null);
-        TextView by_cook = (TextView) rootView.findViewById(R.id.by_cook);
+       // date.setText(null);
+       // TextView by_cook = (TextView) rootView.findViewById(R.id.by_cook);
         //TO DO
-        by_cook.setText(null);
-        TextView liked = (TextView) rootView.findViewById(R.id.liked);
+       // by_cook.setText(null);
+       // TextView liked = (TextView) rootView.findViewById(R.id.liked);
         //TO DO
-        liked.setText(null);
-        TextView cooked = (TextView) rootView.findViewById(R.id.cooked);
+       // liked.setText(null);
+       // TextView cooked = (TextView) rootView.findViewById(R.id.cooked);
         //TO DO
-        cooked.setText(null);
-
-        likeImage       =   (ImageView)rootView.findViewById(R.id.like_icon);
-        sendImage       =   (ImageView)rootView.findViewById(R.id.send_icon);
-        bookmarkedImage =   (ImageView)rootView.findViewById(R.id.bookmark_icon);
-
-
-        //likeImage.setOnClickListener(likeImageOnClickListener);
-        likeImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(context, "Liked", Toast.LENGTH_SHORT).show();
-            }
-        });
-        bookmarkedImage.setOnClickListener(bookmarkedOnClickListener);
-        sendImage.setOnClickListener(sendOnClickListener);
+       // cooked.setText(null);
 
 
 
 
 
 
-
-/*
-        ImageView deleteIcon = (ImageView) rootView.findViewById(R.id.deleteIcon);
+        ImageView deleteIcon = (ImageView) rootView.findViewById(R.id.my_rec_delete_icon);
         deleteIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final String title = "Delete Folder";
+                final String title = "Delete Receipt";
                 final String msg = "Are you sure?";
                 AlertDialog.Builder  builder=  new AlertDialog.Builder(context);
                 builder.setTitle(title);
                 builder.setMessage(msg);
 
-                builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        MyInfoManager.getInstance().deleteFolder(currentFolder);
-                        InfoFolderListAdapter.this.remove(currentFolder);
-                        InfoFolderListAdapter.this.notifyDataSetChanged();
+                        MyInfoManager.getInstance().deleteReceipt(currentReceipt);
+                        MyReceiptsDataAdapter.this.remove(currentReceipt);
+                        MyReceiptsDataAdapter.this.notifyDataSetChanged();
                     }
                 });
 
@@ -140,38 +95,11 @@ public  class ReceiptsDataAdapter extends ArrayAdapter<InfoReceipt> {
                 AlertDialog alertDialog = builder.create();
                 alertDialog .show();
             }
-        }); */
+        });
 
 
         return rootView;
     }
-
-    /**************** LISTENERS ****************/
-
-   /* private View.OnClickListener likeImageOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            //TO DO
-            Toast.makeText(context, "Liked", Toast.LENGTH_SHORT).show();
-        }
-    };*/
-
-    private View.OnClickListener sendOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            //TO DO
-            Toast.makeText(context, "Sent", Toast.LENGTH_SHORT).show();
-        }
-    };
-
-    private View.OnClickListener bookmarkedOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            //TO DO
-            Toast.makeText(context, "Marked", Toast.LENGTH_SHORT).show();
-        }
-    };
-
 
 
 
@@ -271,6 +199,3 @@ class ViewHolder extends RecyclerView.ViewHolder {
 
     } */
 }
-
-
-

@@ -18,12 +18,15 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 
 import com.example.myapplication.R;
 import com.example.myapplication.ReceiptsList.ReceiptsDataAdapter;
 import com.example.myapplication.dataBase.InfoReceipt;
+import com.example.myapplication.dataBase.InfoUser;
 import com.example.myapplication.dataBase.MyInfoManager;
 
 import java.util.ArrayList;
@@ -32,10 +35,10 @@ import java.util.List;
 
 public class ReceiptsListFragment extends Fragment {
 
-    private ListView receiptsList;
+    private ListView            receiptsList;
     private ReceiptsDataAdapter adapter;
-    private Context context = null;
-    private Activity ctx;
+    private Context             context = null;
+    private Activity            ctx;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -49,9 +52,8 @@ public class ReceiptsListFragment extends Fragment {
             ctx.setTitle(ctx.getResources().getString(R.string.myinfo));
         }*/
 
-        receiptsList = (ListView) rootView.findViewById(R.id.folderList);
+        receiptsList    =   (ListView)rootView.findViewById(R.id.folderList);
 
-        receiptsList.setOnItemClickListener(receiptClickListener);
 
         //newFolderBtn = (Button) rootView.findViewById(R.id.new_folder_btn);
         //newFolderBtn.setVisibility(View.VISIBLE);
@@ -68,8 +70,11 @@ public class ReceiptsListFragment extends Fragment {
         adapter = new ReceiptsDataAdapter(context, R.layout.recycler_item, list);
         receiptsList.setAdapter(adapter);
 
+
+
         return rootView;
     }
+
 
 
 
@@ -112,6 +117,7 @@ public class ReceiptsListFragment extends Fragment {
 
         }
     }; */
+
 
 
     // display details
