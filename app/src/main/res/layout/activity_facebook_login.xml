@@ -38,6 +38,7 @@
                 android:layout_height="105dp"
                 android:layout_marginBottom="40dp"
                 android:layout_gravity="center_horizontal"
+                android:contentDescription="@string/app_name"
                 app:srcCompat="@drawable/hat"
                 tools:layout_editor_absoluteX="98dp"
                 tools:layout_editor_absoluteY="40dp" />
@@ -47,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="30dp"
                 android:gravity="center"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:text="@string/facebook_string" />
 
             <android.support.design.widget.TextInputLayout
@@ -60,8 +61,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_email"
                     android:inputType="textEmailAddress"
-                    android:maxLines="1"
-                    android:singleLine="true" />
+                    android:maxLines="1" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -78,8 +78,7 @@
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPassword"
-                    android:maxLines="1"
-                    android:singleLine="true" />
+                    android:maxLines="1" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -101,7 +100,7 @@
                 android:gravity="center"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="15dp"
-                android:textSize="10dp"
+                android:textSize="10sp"
                 android:text="@string/facebook_create_account"
                 android:paddingEnd="5dp"/>
 
@@ -112,7 +111,7 @@
                 android:gravity="center"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="15dp"
-                android:textSize="10dp"
+                android:textSize="10sp"
                 android:text="@string/facebook_back"
                 android:paddingEnd="5dp"/>
 

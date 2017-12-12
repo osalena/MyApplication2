@@ -19,6 +19,8 @@
     <string name="reg_emptyToast">Please fill in all fields</string>
     <string name="reg_passwordToast">Password is too shot (minimus is 6 characters)</string>
     <string name="reg_emailToast">Email is invalid</string>
+    <string name="cr_rec_camera">Camera</string>
+    <string name="user_name">Username</string>
 
 
     <string-array name="language_arrays">
@@ -31,6 +33,12 @@
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email or Phone</string>
+    <string name="email">Email</string>
+    <string name="people_cooked">people cooked</string>
+    <string name="cooked">cooked</string>
+    <string name="liked">people liked</string>
+    <string name="password">Password</string>
+    <string name="name_email">Username/email</string>
     <string name="prompt_password">Facebook Password</string>
     <string name="action_sign_in">Log in</string>
     <string name="action_sign_in_short">Log in</string>

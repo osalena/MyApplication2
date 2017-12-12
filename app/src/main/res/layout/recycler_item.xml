@@ -28,7 +28,7 @@
             android:adjustViewBounds="true"
             android:contentDescription="@null"
             android:scaleType="centerCrop"
-            tools:src="@drawable/squarl"/>
+            tools:src="@drawable/dessert"/>
 
 
       </LinearLayout>
@@ -65,7 +65,7 @@
               android:paddingLeft="10dp"
               android:paddingRight="10dp"
               android:background="@color/colorLightblue"
-              android:text="cooked"/>
+              android:text="@string/cooked"/>
 
           <TextView
               android:id="@+id/date"
@@ -89,7 +89,7 @@
             android:adjustViewBounds="true"
             android:contentDescription="@null"
             android:scaleType="centerCrop"
-            tools:src="@drawable/squarl"/>
+            tools:src="@drawable/dessert"/>
 
         <TextView
             android:id="@+id/name"
@@ -134,7 +134,7 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:background="@color/colorLightblue"
-                android:text="people liked"/>
+                android:text="@string/liked"/>
 
         </LinearLayout>
         <LinearLayout
@@ -159,7 +159,7 @@
               android:paddingLeft="10dp"
               android:paddingRight="10dp"
               android:background="@color/colorLightblue"
-              android:text="people cooked"/>
+              android:text="@string/people_cooked"/>
 
         </LinearLayout>
         <LinearLayout

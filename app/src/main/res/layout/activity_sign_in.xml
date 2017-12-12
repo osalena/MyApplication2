@@ -17,7 +17,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:inputType="textVisiblePassword|textNoSuggestions"
-            android:hint="Username/email" />
+            android:hint="@string/name_email" />
 
 
     <!-- Password Label -->
@@ -28,7 +28,7 @@
             android:inputType="textPassword"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:hint="Password"/>
+            android:hint="@string/password"/>
 
 
     <!-- Show Password Button -->

@@ -32,7 +32,7 @@
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
             android:layout_gravity="center"
-            android:text="cooked"/>
+            android:text="@string/cooked"/>
 
         <TextView
             android:id="@+id/date"

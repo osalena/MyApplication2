@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <array name="images">
-    <item>@drawable/fried_corn</item>
-    <item>@drawable/chess_pie</item>
-    <item>@drawable/pecan_chocolate_chip_cookies</item>
-    <item>@drawable/black_beans</item>
- </array>
+
 
 
   <string-array name="names">
