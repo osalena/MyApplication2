@@ -1,18 +1,17 @@
-package com.example.myapplication;
+package com.example.myapplication.Category;
 
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
+import com.example.myapplication.Category.CategoryDataAdapter;
+import com.example.myapplication.R;
 
 
 public class CategoryFragment extends Fragment{

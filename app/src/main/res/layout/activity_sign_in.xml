@@ -1,42 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:paddingTop="56dp"
     android:paddingLeft="24dp"
     android:paddingRight="24dp"
     android:background="@color/colorMain"
-    tools:context="com.example.myapplication.RegisterActivity">
+    tools:context="com.example.myapplication.LogIn.RegisterActivity">
 
     <!-- User Name Label -->
-        <EditText android:id="@+id/input_username"
+        <EditText android:id="@+id/input_username2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:inputType="textVisiblePassword|textNoSuggestions"
-            android:hint="Username" />
-
-
-    <!-- Email Label -->
-
-
-        <EditText android:id="@+id/input_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:hint="Email" />
-
+            android:hint="Username/email" />
 
 
     <!-- Password Label -->
 
-        <EditText android:id="@+id/input_password"
+        <EditText android:id="@+id/input_password2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
@@ -53,6 +39,11 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:text="@string/reg_showPassword" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/login_password_2"/>
 
     <!-- Create Account Button -->
     <Button
@@ -63,8 +54,4 @@
         android:layout_marginBottom="8dp"
         android:background="@color/colorOrange"
         android:text="@string/reg_createAcc" />
-
-
-
-
 </LinearLayout>

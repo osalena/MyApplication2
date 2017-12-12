@@ -6,7 +6,12 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +23,15 @@ import android.widget.Toast;
 
 import com.example.myapplication.R;
 import com.example.myapplication.dataBase.InfoReceipt;
+import com.example.myapplication.dataBase.InfoUser;
+import com.example.myapplication.dataBase.MyInfoManager;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 
@@ -37,24 +50,25 @@ public  class ReceiptsDataAdapter extends ArrayAdapter<InfoReceipt> {
     private ImageView   likeImage;
     private ImageView   bookmarkedImage;
     private ImageView   sendImage;
+
+    private TextView    title;
+    private ImageView   receiptImage;
+    private ImageView   userImage;
+    private TextView    poster;
+
     protected Context   context;
 
+
     private List<InfoReceipt> receipts;
+
 
 
     public ReceiptsDataAdapter(Context context, int resource, List<InfoReceipt> objects) {
         super(context, resource, objects);
         this.context = context;
         receipts = objects;
-        /*mLayoutInflater = LayoutInflater.from(context);
-        this.context = context;
-        this.mImageResIds=mImageResIds;
-        this.mNames = mNames;
-        this.mPosters = mPosters;
-        this.mDescriptions = mDescriptions;
-        this.mDates = mDates;
-        this.mLiked = mLiked;
-        this.mCooked = mCooked; */
+        MyInfoManager.getInstance().openDataBase(context);
+
 
     }
 
@@ -68,17 +82,18 @@ public  class ReceiptsDataAdapter extends ArrayAdapter<InfoReceipt> {
 
         LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         View rootView = mInflater.inflate(R.layout.recycler_item, null);
+        MyInfoManager.getInstance().openDataBase(context);
+
         final InfoReceipt currentReceipt = getItem(position);
-        TextView title = (TextView) rootView.findViewById(R.id.name);
+
+        title           =   (TextView) rootView.findViewById(R.id.name);
+        receiptImage    =   (ImageView) rootView.findViewById(R.id.animal_image);
+        userImage       =   (ImageView) rootView.findViewById(R.id.user_image);
+        poster          =   (TextView) rootView.findViewById(R.id.poster);
         title.setText(currentReceipt.getTitle());
-        ImageView receiptImage = (ImageView) rootView.findViewById(R.id.animal_image);
         receiptImage.setImageBitmap(currentReceipt.getImage1());
-        ImageView userImage = (ImageView) rootView.findViewById(R.id.user_image);
-        //TO DO
-        userImage.setImageBitmap(null);
-        TextView poster = (TextView) rootView.findViewById(R.id.poster);
-        //TO DO
-        poster.setText(null);
+        userImage.setImageBitmap(MyInfoManager.getInstance().readUser(currentReceipt.getUserId()).getImage1());
+        poster.setText(MyInfoManager.getInstance().readUser(currentReceipt.getUserId()).getUsername());
         TextView date = (TextView) rootView.findViewById(R.id.date);
         //TO DO
         date.setText(null);
@@ -105,7 +120,53 @@ public  class ReceiptsDataAdapter extends ArrayAdapter<InfoReceipt> {
             }
         });
         bookmarkedImage.setOnClickListener(bookmarkedOnClickListener);
-        sendImage.setOnClickListener(sendOnClickListener);
+        sendImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Toast.makeText(context, "Sent", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+                //intent.putExtra(Intent.EXTRA_EMAIL, addresses);
+                intent.putExtra(Intent.EXTRA_SUBJECT, currentReceipt.getTitle());
+                //File f = shareBitmap(currentReceipt.getImage1(), currentReceipt.getTitle());
+               // FileProvider p = new FileProvider();
+                //p.getUriForFile(f);
+                //String pathofBmp = MediaStore.Images.Media.insertImage(context.getContentResolver(), currentReceipt.getImage1(),"title", null);
+                //Uri attachment = Uri.parse(pathofBmp);
+                //intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                String randomNameOfPic = Calendar.DAY_OF_YEAR+ DateFormat.getTimeInstance().toString();
+                File file = new File(context.getCacheDir(), "slip"+  randomNameOfPic+ ".jpg");
+                FileOutputStream fOut = null;
+                try {
+                    fOut = new FileOutputStream(file);
+                    Bitmap myPic =  currentReceipt.getImage1();
+                    myPic.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
+                    fOut.flush();
+                    fOut.close();
+                    file.setReadable(true, false);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                //String fileExtension = ".tmp";
+                //File temporaryFile = File.createTempFile( fileName, fileExtension, context.getExternalCacheDir() );
+                //FileUtils.copyFile(f, temporaryFile);
+                //if (Uri.fromFile(f) != null) {
+                    // Grant temporary read permission to the content URI
+                    //intent.addFlags(
+                            //Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    //intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
+                //}
+                intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+                //intent.putExtra(Intent.EXTRA_TEXT, currentReceipt.getDescription());
+                if (intent.resolveActivity(context.getPackageManager()) != null) {
+                    context.startActivity(intent);
+                }
+            }
+        });
 
 
 
@@ -146,6 +207,26 @@ public  class ReceiptsDataAdapter extends ArrayAdapter<InfoReceipt> {
         return rootView;
     }
 
+    private File shareBitmap (Bitmap bitmap, String fileName) {
+        try {
+            File file = new File(getContext().getCacheDir(), fileName + ".png");
+            FileOutputStream fOut = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+            fOut.flush();
+            fOut.close();
+            file.setReadable(true, false);
+            //final Intent intent = new Intent(     android.content.Intent.ACTION_SEND);
+            //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            //intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+            //intent.setType("image/png");
+            //startActivity(intent);
+            return file;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     /**************** LISTENERS ****************/
 
    /* private View.OnClickListener likeImageOnClickListener = new View.OnClickListener() {
@@ -156,13 +237,6 @@ public  class ReceiptsDataAdapter extends ArrayAdapter<InfoReceipt> {
         }
     };*/
 
-    private View.OnClickListener sendOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            //TO DO
-            Toast.makeText(context, "Sent", Toast.LENGTH_SHORT).show();
-        }
-    };
 
     private View.OnClickListener bookmarkedOnClickListener = new View.OnClickListener() {
         @Override

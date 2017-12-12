@@ -10,7 +10,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:background="@color/colorLightblue"
-    tools:context="com.example.myapplication.activity_facebook_login">
+    tools:context="com.example.myapplication.LogIn.activity_facebook_login">
 
     <!-- Login progress -->
     <ProgressBar

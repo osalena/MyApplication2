@@ -1,7 +1,7 @@
 package com.example.myapplication;
 
 
-import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -17,7 +17,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.myapplication.Category.CategoryFragment;
+import com.example.myapplication.LogIn.activity_signIn;
+import com.example.myapplication.MyReceipts.CreateReceiptActivity;
+import com.example.myapplication.MyReceipts.MyReceiptsActivity;
 import com.example.myapplication.ReceiptsList.ReceiptsListFragment;
+import com.example.myapplication.dataBase.InfoUser;
 import com.example.myapplication.dataBase.MyInfoManager;
 
 
@@ -27,6 +32,7 @@ public class activity_main_cookpad extends AppCompatActivity {
     private SearchView           searchView;
     private FloatingActionButton actionButton;
     private ActionBar            actionBar;
+    private InfoUser             curUser;
 
 
     @Override
@@ -38,20 +44,29 @@ public class activity_main_cookpad extends AppCompatActivity {
         searchView      =   (SearchView)findViewById(R.id.search);
         actionButton    =   (FloatingActionButton)findViewById(R.id.myFAB);
 
+        //to open DB
+        MyInfoManager.getInstance().openDataBase(this);
+
+        /* get current user info */
+        Bundle b = getIntent().getExtras();
+        curUser= MyInfoManager.getInstance().readUser(b.getInt("user"));
+
         /* to display Category List */
         getCategories();
-        trending.callOnClick();
-        //searchView.setIconified(false);
+        /* to open Fragment2 on create */
+        showFragment1OnClick(trending);
+
         searchView.onActionViewExpanded();
         searchView.clearFocus();
 
-        //to get DB
-        MyInfoManager.getInstance().openDataBase(this);
 
-        //actionBar.setTitle(null);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+
+
+
         //actionBar.setDisplayHomeAsUpEnabled(true);
         //actionBar.setHomeButtonEnabled(true);
-        //actionBar.setIcon(null)
 
 
         //hideKeyboard();
@@ -64,23 +79,12 @@ public class activity_main_cookpad extends AppCompatActivity {
     private void getCategories() {
 
         FragmentManager categoryManager = getFragmentManager();
-        //Bundle argsCat = new Bundle();
-        //argsCat.putInt("no", 555);
-        //argsCat.putStringArray("category", getResources().getStringArray(R.array.categories));
-        //argsCat.putString("name", "Israel Israel");
         CategoryFragment fragmentCat= new CategoryFragment();
-       // fragmentCat.setArguments(argsCat);
         FragmentTransaction tCat= categoryManager.beginTransaction();
         tCat.add(R.id.category_layoutt, fragmentCat);
         tCat.addToBackStack(null);
         tCat.commit();
 
-        FragmentManager fm = getFragmentManager();
-        ReceiptsListFragment fragmet2= new ReceiptsListFragment();
-        FragmentTransaction t= fm.beginTransaction();
-        t.replace(R.id.root_layout, fragmet2);
-        t.addToBackStack(null);
-        t.commit();
     }
 
     @Override
@@ -95,69 +99,47 @@ public class activity_main_cookpad extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.cook_pad_icon:{
                 Intent intent = new Intent(activity_main_cookpad.this, MyReceiptsActivity.class);
+                intent.putExtra("user", curUser.getId());
+                activity_main_cookpad.this.startActivity(intent);
+                return true;
+            }
+            case R.id.cook_pad_notification: {
+                Intent intent = new Intent(activity_main_cookpad.this, MyNotificationsActivity.class);
+                intent.putExtra("user", curUser.getId());
+                activity_main_cookpad.this.startActivity(intent);
+                return true;
+            }
+            case R.id.cook_pad_conversation: {
+                Intent intent = new Intent(activity_main_cookpad.this, MyConversationsActivity.class);
+                intent.putExtra("user", curUser.getId());
                 activity_main_cookpad.this.startActivity(intent);
                 return true;
             }
         }
-      /* switch (item.getItemId()) {
-            case R.id.menuitem_search: {
-                FindFragment findFragment = new FindFragment();
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.replace(R.id.rootview, findFragment);
-                ft.commit();
-                Toast.makeText(this, getString(R.string.ui_menu_search),
-                        Toast.LENGTH_SHORT).show();
-
-                return true;
-            }
-            case R.id.menuitem_send:
-                Toast.makeText(this, getString(R.string.ui_menu_send),
-                        Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.menuitem_add:
-                Toast.makeText(this, getString(R.string.ui_menu_add),
-                        Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.menuitem_share:
-                Toast.makeText(this, getString(R.string.ui_menu_share),
-                        Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.menuitem_feedback: {
-                ChatFragment chatFragment = new ChatFragment();
-                FragmentTransaction ftransaction = fm.beginTransaction();
-                ftransaction.replace(R.id.rootview, chatFragment);
-                ftransaction.commit();
-
-                Toast.makeText(this, getString(R.string.ui_menu_feedback),
-                        Toast.LENGTH_SHORT).show();
-                return true;
-            }
-            case R.id.menuitem_about:
-                Intent intent = new Intent(this,AboutActivity.class);
-                startActivity(intent);
-                Toast.makeText(this, getString(R.string.ui_menu_about),
-                        Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.menuitem_quit:
-                Toast.makeText(this, getString(R.string.ui_menu_quit),
-                        Toast.LENGTH_SHORT).show();
-                finish(); // close the activity
-                return true;
-        } */
         return false;
     }
 
     public void createNewReceiptOnClick (View view) {
-        //Toast.makeText(getApplicationContext(), "dfdf", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(activity_main_cookpad.this, CreateReceiptActivity.class);
+        intent.putExtra("id", -1);
+        intent.putExtra("user", curUser.getId());
         activity_main_cookpad.this.startActivity(intent);
     }
 
 
     public void showFragment1OnClick(View view) {
-
-        // send data to fragment
+        Bundle bundle = new Bundle();
+        bundle.putInt("flag", 2);
+        bundle.putInt("user", curUser.getId());
         FragmentManager fm = getFragmentManager();
+        ReceiptsListFragment fragmet2= new ReceiptsListFragment();
+        fragmet2.setArguments(bundle);
+        FragmentTransaction t= fm.beginTransaction();
+        t.replace(R.id.root_layout, fragmet2, "fragment");
+        t.addToBackStack(null);
+        t.commit();
+        // send data to fragment
+       /* FragmentManager fm = getFragmentManager();
         Bundle args = new Bundle();
         args.putInt("no", 123);
         args.putString("name", "Israel Israel");
@@ -166,18 +148,46 @@ public class activity_main_cookpad extends AppCompatActivity {
         FragmentTransaction t= fm.beginTransaction();
         t.replace(R.id.root_layout, fragmet1);
         t.addToBackStack(null);
-        t.commit();
+        t.commit(); */
 
     }
 
     public void showFragment2OnClick(View view) {
+        Bundle bundle = new Bundle();
+        bundle.putInt("flag", 1);
+        bundle.putInt("user", curUser.getId());
         FragmentManager fm = getFragmentManager();
         ReceiptsListFragment fragmet2= new ReceiptsListFragment();
+        fragmet2.setArguments(bundle);
         FragmentTransaction t= fm.beginTransaction();
         t.replace(R.id.root_layout, fragmet2, "fragment");
         t.addToBackStack(null);
         t.commit();
     }
+
+    public void showNearbyFragmentOnClick(View view){
+        FragmentManager fm = getFragmentManager();
+        Fragment f = new Fragment();
+        FragmentTransaction t= fm.beginTransaction();
+        t.replace(R.id.root_layout, f, "fragment");
+        t.addToBackStack(null);
+        t.commit();
+
+
+    }
+
+
+  /*  private void showFragment2onCreate(){
+        Bundle bundle = new Bundle();
+        bundle.putInt("flag", 1);
+        FragmentManager fm = getFragmentManager();
+        ReceiptsListFragment fragmet2= new ReceiptsListFragment();
+        fragmet2.setArguments(bundle);
+        FragmentTransaction t= fm.beginTransaction();
+        t.replace(R.id.root_layout, fragmet2);
+        t.addToBackStack(null);
+        t.commit();
+    } */
 
     //doesn't work
     /*private void hideKeyboard() {
@@ -195,7 +205,17 @@ public class activity_main_cookpad extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        MyInfoManager.getInstance().openDataBase(this);
+        /*MyInfoManager.getInstance().openDataBase(this);
+        FragmentManager fm = getFragmentManager();
+        ReceiptsListFragment fragmet2= new ReceiptsListFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("flag", 1);
+        fragmet2.setArguments(bundle);
+        FragmentTransaction t= fm.beginTransaction();
+        t.replace(R.id.root_layout, fragmet2, "fragment");
+        t.addToBackStack(null);
+        t.commit();*/
+        showFragment2OnClick(trending);
         super.onResume();
 
     }

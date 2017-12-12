@@ -12,6 +12,7 @@
     </string>
     <string name="login_signup_with_email">Already registered with email? Log in</string>
     <string name="login_email">Sing-up with email</string>
+    <string name="login_password_2">Forgot your password?</string>
     <string name="reg_showPassword">Show password</string>
     <string name="reg_hidePassword">Mask password</string>
     <string name="reg_createAcc">Sign Up</string>
@@ -64,6 +65,7 @@
     <string name="cr_recipe_title">Recipe Title</string>
     <string name="cr_recipe_description">Description</string>
     <string name="cr_recipe_save">Your receipt was saved.</string>
+    <string name="cr_recipe_edit">Your receipt was updated.</string>
 
 
 </resources>

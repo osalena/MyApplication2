@@ -4,52 +4,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:paddingTop="56dp"
     android:paddingLeft="24dp"
     android:paddingRight="24dp"
     android:background="@color/colorMain"
-    tools:context="com.example.myapplication.RegisterActivity">
+    tools:context="com.example.myapplication.LogIn.RegisterActivity">
 
     <!-- Email Label -->
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp">
+
+
         <EditText android:id="@+id/input_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:inputType="textVisiblePassword|textNoSuggestions"
             android:hint="Username" />
-    </android.support.design.widget.TextInputLayout>
+
 
     <!-- Email Label -->
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp">
+
         <EditText android:id="@+id/input_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:hint="Email" />
-    </android.support.design.widget.TextInputLayout>
+
 
 
     <!-- Password Label -->
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp">
+
         <EditText android:id="@+id/input_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:inputType="textPassword"
             android:hint="Password"/>
-    </android.support.design.widget.TextInputLayout>
+
 
     <!-- Show Password Button -->
     <Button

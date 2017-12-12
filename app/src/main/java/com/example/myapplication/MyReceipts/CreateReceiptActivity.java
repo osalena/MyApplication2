@@ -1,14 +1,14 @@
-package com.example.myapplication;
+package com.example.myapplication.MyReceipts;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.myapplication.R;
 import com.example.myapplication.dataBase.InfoReceipt;
 import com.example.myapplication.dataBase.InfoUser;
 import com.example.myapplication.dataBase.MyInfoManager;
@@ -28,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 
 public class CreateReceiptActivity extends AppCompatActivity implements View.OnClickListener{
@@ -38,23 +40,31 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
     private EditText    editTextDescription;
     private Bitmap      bitmap = null;
     private File        output=null;
-    private InfoUser    user;
+    private InfoUser    curUser;
+    private Menu        menu;
+    /* receipt ID from bind
+    * -1 for new receipt*/
+    private int         id;
+    /*1 for non-editable*/
+    private int         edit_flag = 0;
 
 
     //private ActionBar actionBar;
     public  static final int GET_FROM_GALLERY = 1;
     private static final int REQUEST_TAKE_PHOTO = 111;
-    private static final int PHOTO_W = 500;
-    private static final int PHOTO_H = 300;
+    private static final int PHOTO_W = 400;
+    private static final int PHOTO_H = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_receipt);
+        MyInfoManager.getInstance().openDataBase(this);
         /* to display BACK button */
         android.app.ActionBar actionBar = getActionBar();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        //getSupportActionBar().setDisplayShowTitleEnabled(false);
         //actionBar.setIcon(null);
         imageView           = (ImageView)findViewById(R.id.uploadImage);
         loadImageButton     = (Button)findViewById(R.id.creat_rec_add_photo);
@@ -63,17 +73,51 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
         imageView.setOnClickListener(this);
         loadImageButton.setOnClickListener(cameraOnClickListener);
 
-        user = new InfoUser("Test", null, "123");
+        Bundle b = getIntent().getExtras();
+        id = b.getInt("id");
+        edit_flag = b.getInt("edit_flag");
+         /* get current user info */
+        curUser= MyInfoManager.getInstance().readUser(b.getInt("user"));
+
+
+        /* existing receipt to edit*/
+        if(id > -1){
+            InfoReceipt rec = MyInfoManager.getInstance().readReceipt(id);
+            imageView.setImageBitmap(rec.getImage1());
+            editTextTitle.setText(rec.getTitle());
+            editTextDescription.setText(rec.getDescription());
+            /* to display Receipt details without editing */
+            if(edit_flag == 1) {
+                editTextTitle.setEnabled(false);
+                editTextDescription.setEnabled(false);
+                imageView.setClickable(false);
+                loadImageButton.setVisibility(View.INVISIBLE);
+                //Toast.makeText(CreateReceiptActivity.this, rec.getDate(), Toast.LENGTH_LONG).show();
+            }
+        }
+
+
+
+        getSupportActionBar().setTitle(curUser.getUsername());
     }
 
 
+    /* Menu creator*/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_create_receipt, menu);
+        this.menu = menu;
+        /* to display Receipt details without editing */
+        if(edit_flag == 1) {
+            menu.findItem(R.id.create_rec_save).setVisible(false);
+            menu.findItem(R.id.create_rec_hat).setVisible(false);
+        }
+        //super.onCreateOptionsMenu(menu, inflater);
         return true;
     }
 
+    /* Listener for menu's items*/
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -87,9 +131,26 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
                 //CreateReceiptActivity.this.startActivity(intent);
                 return true;
             case R.id.create_rec_save:
-                InfoReceipt receipt = new InfoReceipt(editTextTitle.getText().toString(), editTextDescription.getText().toString(), bitmap);
-                MyInfoManager.getInstance().createReceipt(user, receipt);
-                Toast.makeText(CreateReceiptActivity.this, getResources().getText(R.string.cr_recipe_save), Toast.LENGTH_SHORT).show();
+                /* new receipt to add */
+                if (id == -1 && edit_flag == 0) {
+                    /* photo is empty*/
+                    if(bitmap == null){
+                        BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
+                        bitmap = drawable.getBitmap();
+                    }
+                    InfoReceipt receipt = new InfoReceipt(editTextTitle.getText().toString(), editTextDescription.getText().toString(), bitmap);
+                    MyInfoManager.getInstance().createReceipt(curUser, receipt);
+                    Toast.makeText(CreateReceiptActivity.this, getResources().getText(R.string.cr_recipe_save), Toast.LENGTH_SHORT).show();
+                }
+                /* existing receipt to edit */
+                else if (id > -1 && edit_flag == 0){
+                    BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
+                    Bitmap bitmap2 = drawable.getBitmap();
+                    InfoReceipt updatedReceipt =  new InfoReceipt(editTextTitle.getText().toString(), editTextDescription.getText().toString(), bitmap2);
+                    updatedReceipt.setId(id);
+                    MyInfoManager.getInstance().updateReceipt(updatedReceipt);
+                    Toast.makeText(CreateReceiptActivity.this, getResources().getText(R.string.cr_recipe_edit), Toast.LENGTH_SHORT).show();
+                }
                 return true;
 
             default:
@@ -158,6 +219,7 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
                     Uri imageUri = data.getData();
                     try {
                         bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),imageUri);
+                        bitmap = getScaledImageFromFilePath(bitmap);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -261,5 +323,28 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
             e.printStackTrace();
         }
         return scaledBitmap;
+    }
+
+    private Bitmap getScaledImageFromFilePath(Bitmap bitmap) {
+
+        //Bitmap d = new BitmapDrawable(ctx.getResources() , w.photo.getAbsolutePath()).getBitmap();
+        int nh = (int) ( bitmap.getHeight() * (512.0 / bitmap.getWidth()) );
+        Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 512, nh, true);
+
+        // Get the dimensions of the View
+        /*Bitmap scaledBitmap = null;
+        try {
+
+
+            Matrix matrix = new Matrix();
+            matrix.postRotate(90);
+
+            Bitmap rotatedBitmap =  Bitmap.createScaledBitmap(bitmap, PHOTO_W, PHOTO_H, false);
+            scaledBitmap = Bitmap.createBitmap(rotatedBitmap , 0, 0, rotatedBitmap.getWidth(), rotatedBitmap.getHeight(), matrix, true);
+
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }*/
+        return scaled;
     }
 }

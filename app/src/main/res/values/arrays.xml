@@ -54,10 +54,14 @@
         <item>dessert</item>
         <item>breakfast</item>
         <item>lunch</item>
-        <item>snuck</item>
-        <item>dinner</item>
         <item>categories</item>
     </string-array>
+
+    <array name="categories_image">
+        <item>@drawable/dessert</item>
+        <item>@drawable/breakfast</item>
+        <item>@drawable/lunch</item>
+    </array>
 
 
 </resources>

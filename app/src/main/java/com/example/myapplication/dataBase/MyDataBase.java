@@ -16,7 +16,7 @@ import java.util.List;
 
 public class MyDataBase extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "MyDB";
 
     // Users
@@ -35,9 +35,20 @@ public class MyDataBase extends SQLiteOpenHelper {
     private static final String RECEIPT_COLUMN_DESCRIPTION = "description";
     private static final String RECEIPT_COLUMN__IMAGE1 = "image1";
     private static final String RECEIPT_COLUMN_USERID = "user_id";
-
+    //private static final String RECEIPT_COLUMN_CATEGORY = "category";
+    //private static final String RECEIPT_COLUMN_DATE = "date";
     private static final String[] TABLE_RECEIPT_COLUMNS = {RECEIPT_COLUMN_ID, RECEIPT_COLUMN_TITLE,
             RECEIPT_COLUMN_DESCRIPTION, RECEIPT_COLUMN__IMAGE1, RECEIPT_COLUMN_USERID};
+
+
+    //categories table
+    private static final String TABLE_CATEGORIES_NAME = "categories";
+    private static final String CATEGORIES_COLUMN_ID = "id";
+    private static final String CATEGORIES_COLUMN_TITLE = "title";
+    private static final String CATEGORIES_COLUMN_PICTURE = "pic";
+    private static final String[] TABLE_CATEGORIES_COLUMNS = {CATEGORIES_COLUMN_ID, CATEGORIES_COLUMN_TITLE,
+            CATEGORIES_COLUMN_PICTURE, USERS_COLUMN_PASSWORD};
+
 
 
     private SQLiteDatabase db = null;
@@ -51,13 +62,15 @@ public class MyDataBase extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         try {
             // SQL statement to create receipts table
-            String CREATE_RECEIPTS_TABLE = "create table if not exists " + TABLE_RECEIPTS_NAME +" ( "
-                    + RECEIPT_COLUMN_ID +" INTEGER PRIMARY KEY AUTOINCREMENT, "
-                    + RECEIPT_COLUMN_TITLE +" TEXT, "
-                    + RECEIPT_COLUMN_DESCRIPTION + " TEXT, "
-                    + RECEIPT_COLUMN__IMAGE1 + " BLOB, "
-                    + RECEIPT_COLUMN_USERID + " INTEGER)";
-            db.execSQL(CREATE_RECEIPTS_TABLE);
+            if (!isTableExist(TABLE_RECEIPTS_NAME, db)) {
+                String CREATE_RECEIPTS_TABLE = "create table if not exists " + TABLE_RECEIPTS_NAME + " ( "
+                        + RECEIPT_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                        + RECEIPT_COLUMN_TITLE + " TEXT, "
+                        + RECEIPT_COLUMN_DESCRIPTION + " TEXT, "
+                        + RECEIPT_COLUMN__IMAGE1 + " BLOB, "
+                        + RECEIPT_COLUMN_USERID + " INTEGER)";
+                db.execSQL(CREATE_RECEIPTS_TABLE);
+            }
 
             if (!isTableExist(TABLE_USERS_NAME, db)) {
                 // SQL statement to create users table
@@ -80,6 +93,28 @@ public class MyDataBase extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         try {
+           /* if(DATABASE_VERSION ==2 ){
+                if (!isTableExist(TABLE_CATEGORIES_NAME, db)) {
+                    // SQL statement to create categories table
+                    String CREATE_USERS_TABLE = "create table if not exists "+ TABLE_CATEGORIES_NAME+" ( "
+                            + CATEGORIES_COLUMN_ID +" INTEGER PRIMARY KEY AUTOINCREMENT, "
+                            + CATEGORIES_COLUMN_TITLE + " TEXT, "
+                            + CATEGORIES_COLUMN_PICTURE + " BLOB)";
+
+                    db.execSQL(CREATE_USERS_TABLE);
+
+                }
+                String DATABASE_ALTER_ADD_CATEGORY = "ALTER TABLE "
+                        + TABLE_RECEIPTS_NAME + " ADD COLUMN " + RECEIPT_COLUMN_CATEGORY + " TEXT;";
+                db.execSQL(DATABASE_ALTER_ADD_CATEGORY);
+
+                String DATABASE_ALTER_ADD_DATE = "ALTER TABLE "
+                        + TABLE_RECEIPTS_NAME + " ADD COLUMN " + RECEIPT_COLUMN_DATE + " datetime(CURRENT_TIMESTAMP, 'localtime');";
+
+                db.execSQL(DATABASE_ALTER_ADD_DATE);
+
+
+            }*/
             // drop item table if already exists
             //db.execSQL("DROP TABLE IF EXISTS items");
             //db.execSQL("DROP TABLE IF EXISTS folders");
@@ -184,6 +219,8 @@ public class MyDataBase extends SQLiteOpenHelper {
 
 
                 receipt.setUserId(Integer.parseInt(cursor.getString(4)));
+                //receipt.setCategory(cursor.getString(5));
+                //receipt.setDate(cursor.getString(6));
             }
         } catch (Throwable t) {
             t.printStackTrace();
@@ -258,7 +295,7 @@ public class MyDataBase extends SQLiteOpenHelper {
                 cursor.moveToFirst();
 
             user = new InfoUser();
-            user.setId(Integer.parseInt(cursor.getString(0)));
+            user.setId(cursor.getInt(0));
             user.setUsername(cursor.getString(1));
 
             //images
@@ -419,6 +456,18 @@ public class MyDataBase extends SQLiteOpenHelper {
             // make values to be inserted
             ContentValues values = new ContentValues();
             values.put(USERS_COLUMN_USERNAME, user.getUsername());
+
+            //images
+            Bitmap image1 = user.getImage1();
+            if (image1 != null) {
+                byte[] data = getBitmapAsByteArray(image1);
+                if (data != null && data.length > 0) {
+                    values.put(USERS_COLUMN_USERPIC, data);
+                }
+            }
+            else{
+                values.putNull(USERS_COLUMN_USERPIC);
+            }
 
             // update
             i = db.update(TABLE_USERS_NAME, values, USERS_COLUMN_ID + " = ?",

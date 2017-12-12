@@ -1,7 +1,6 @@
-package com.example.myapplication;
+package com.example.myapplication.LogIn;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
@@ -11,13 +10,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.myapplication.R;
+
 import java.util.regex.Pattern;
 
-public class activity_signIn extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity {
 
     /*
-      declare flag for show/hide password
-       */
+    declare flag for show/hide password
+     */
     boolean VISIBLE_PASSWORD = false;
 
     Button loginPassword = null;
@@ -67,7 +68,7 @@ public class activity_signIn extends AppCompatActivity {
      */
     android.view.View.OnClickListener onClickListenerCreateAcc = new View.OnClickListener() {
         public void onClick(View v) {
-            /*if(isEmptyInput(input_email) || isEmptyInput(input_password) || isEmptyInput(input_username)) {
+            if(isEmptyInput(input_email) || isEmptyInput(input_password) || isEmptyInput(input_username)) {
                 Toast.makeText(getActivity(),R.string.reg_emptyToast,
                         Toast.LENGTH_LONG).show();
                 return;
@@ -76,7 +77,7 @@ public class activity_signIn extends AppCompatActivity {
             if(!checkEmail(input_email.getText().toString()) &&
                     input_password.getText().toString().trim().length()<6){
                 Toast.makeText(getActivity(), getActivity().getString(R.string.reg_emailToast) + " and "
-                                + getActivity().getString(R.string.reg_passwordToast),
+                        + getActivity().getString(R.string.reg_passwordToast),
                         Toast.LENGTH_LONG).show();
                 return;
             }
@@ -91,19 +92,12 @@ public class activity_signIn extends AppCompatActivity {
                         Toast.LENGTH_LONG).show();
             }
 
-            else {
-                Intent intent = new Intent(activity_signIn.this, activity_main_cookpad.class);
-                activity_signIn.this.startActivity(intent);
-            } */
-
-            Intent intent = new Intent(activity_signIn.this, activity_main_cookpad.class);
-            activity_signIn.this.startActivity(intent);
 
         }
     };
 
     public Context getActivity() {
-        return activity_signIn.this;
+        return RegisterActivity.this;
     }
 
     private boolean isEmptyInput (EditText t){

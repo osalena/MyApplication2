@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.MyReceipts;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,17 +11,21 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.myapplication.R;
 import com.example.myapplication.dataBase.InfoReceipt;
 import com.example.myapplication.dataBase.MyInfoManager;
 
 import java.util.List;
 
-
+/* DataAdapter for My Receipts list
+* receive:
+*   MyReceiptActivity context
+*   list of receipts
+* */
 public class MyReceiptsDataAdapter extends ArrayAdapter {
 
-    protected Context context;
-
-    private List<InfoReceipt> receipts;
+    protected Context           context;
+    private List<InfoReceipt>   receipts;
 
 
     public MyReceiptsDataAdapter(Context context, int resource, List<InfoReceipt> objects) {
@@ -68,7 +72,10 @@ public class MyReceiptsDataAdapter extends ArrayAdapter {
 
 
 
-
+        /* Delete My Receipt function
+        *  from "Garbage" icon
+        *  displays Toast
+        *  use deleteReceipt from MyInfoManager*/
         ImageView deleteIcon = (ImageView) rootView.findViewById(R.id.my_rec_delete_icon);
         deleteIcon.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.myapplication.CreateReceiptActivity">
+    android:scrollbarAlwaysDrawVerticalTrack="true"
+    android:background="@color/colorMain"
+    tools:context="com.example.myapplication.MyReceipts.CreateReceiptActivity">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,7 +21,7 @@
             android:layout_height="200dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="20dp"
-            android:src="@drawable/hat"/>
+            android:src="@drawable/gallery_photo"/>
         <Button
             android:id="@+id/creat_rec_add_photo"
             android:layout_height="wrap_content"
@@ -33,8 +38,9 @@
         <EditText
             android:id="@+id/editTextRecipeDescription"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="wrap_content"
             android:inputType="text|textMultiLine"
             android:hint="@string/cr_recipe_description"/>
     </LinearLayout>
-</RelativeLayout>
+    </RelativeLayout>
+</ScrollView>
