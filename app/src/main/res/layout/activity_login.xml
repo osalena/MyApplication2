@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="10dp"
-    android:paddingLeft="24dp"
-    android:paddingRight="24dp"
-    android:orientation="vertical"
     android:background="@color/colorMain"
     tools:context="com.example.myapplication.LogIn.LoginActivity">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="10dp"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:orientation="vertical">
     <TextView
         android:id="@+id/back_textView"
         android:layout_width="wrap_content"
@@ -37,7 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:gravity="center"
-        android:textSize="20sp"
+        android:textSize="10sp"
         android:text="@string/main_discover" />
 
     <TextView
@@ -47,7 +50,7 @@
         android:layout_marginBottom="10dp"
         android:gravity="center"
         android:layout_gravity="center_horizontal"
-        android:textSize="20sp"
+        android:textSize="10sp"
         android:textStyle="bold"
         android:text="@string/login_social"
         />
@@ -79,7 +82,7 @@
         android:layout_marginBottom="10dp"
         android:gravity="center"
         android:layout_gravity="center_horizontal"
-        android:textSize="15sp"
+        android:textSize="10sp"
         android:text="@string/login_or"
         />
 
@@ -96,7 +99,7 @@
         android:layout_marginBottom="15dp"
         android:gravity="center"
         android:layout_gravity="center_horizontal"
-        android:textSize="20sp"
+        android:textSize="10sp"
         android:text="@string/login_signup_with_email"
         />
 
@@ -112,6 +115,6 @@
         android:paddingEnd="5dp"/>
 
 
+    </LinearLayout>
 
-
-</LinearLayout>
+</ScrollView>

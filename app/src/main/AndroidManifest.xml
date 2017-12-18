@@ -37,7 +37,7 @@
         <activity android:name=".MyReceipts.CreateReceiptActivity" />
         <activity android:name=".MyReceipts.MyReceiptsActivity" />
         <activity android:name=".MyNotificationsActivity" />
-        <activity android:name=".MyConversationsActivity"></activity>
+        <activity android:name=".MyConversationsActivity" />
     </application>
 
 </manifest>

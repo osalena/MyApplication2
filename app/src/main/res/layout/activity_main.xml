@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="30dp"
         android:gravity="center"
-        android:textSize="20sp"
+        android:textSize="15sp"
         android:text="@string/main_discover" />
 
     <TextView
@@ -39,7 +39,7 @@
         android:layout_marginBottom="24dp"
         android:gravity="center"
         android:layout_gravity="center_horizontal"
-        android:textSize="20sp"
+        android:textSize="15sp"
         android:text="@string/main_language"
      />
 
@@ -63,7 +63,7 @@
         android:gravity="center"
         android:layout_gravity="center_horizontal"
         android:textStyle="bold"
-        android:textSize="20sp"
+        android:textSize="15sp"
         android:text="@string/main_cont"
         />
 
