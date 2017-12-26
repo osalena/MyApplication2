@@ -36,6 +36,7 @@ public class CategoryResProvider {
 	
 			rs = ps.executeQuery();
 
+
 			while (rs.next()) {
 
 				String id = rs.getString(1);

@@ -32,25 +32,25 @@ public class ProjectResourceServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	// ========
-	private static final int GET_ALL_FOLDERS_JSON_REQ = 0;
-	private static final int INSERT_FOLDER_REQ = 1;
-	private static final int DELETE_FOLDER_REQ = 2;
-	private static final int INSERT_ITEM_REQ = 3;
-	private static final int DELETE_ITEM_REQ = 4;
-	private static final int GET_ITEM_IMAGE_REQ = 5;
-	private static final int GET_ITEMS_OF_FOLDER_JSON_REQ = 6;
+	private static final int GET_ALL_CATEGORIES_JSON_REQ = 0;
+	//private static final int INSERT_FOLDER_REQ = 1;
+	//private static final int DELETE_FOLDER_REQ = 2;
+	//private static final int INSERT_ITEM_REQ = 3;
+	//private static final int DELETE_ITEM_REQ = 4;
+	//private static final int GET_ITEM_IMAGE_REQ = 5;
+	//private static final int GET_ITEMS_OF_FOLDER_JSON_REQ = 6;
 	private static final int GET_FILE_FROM_FILESYSTEM_REQ = 7;
 
-	private static final String FOLDER_ID = "f_id";
-	private static final String FOLDER_TITLE = "f_title";
+	//private static final String FOLDER_ID = "f_id";
+	//private static final String FOLDER_TITLE = "f_title";
 
 	private static final String RESOURCE_FAIL_TAG = "{\"result_code\":0}";
 	private static final String RESOURCE_SUCCESS_TAG = "{\"result_code\":1}";
 
-	private static final String ITEM_ID = "it_id";
-	private static final String ITEM_TITLE = "it_title";
-	private static final String ITEM_DESCRIPTION = "it_desc";
-	private static final String ITEM_FOLDER_ID = "it_fid";
+	//private static final String ITEM_ID = "it_id";
+	//private static final String ITEM_TITLE = "it_title";
+	//private static final String ITEM_DESCRIPTION = "it_desc";
+	//private static final String ITEM_FOLDER_ID = "it_fid";
 	private static final String FILE_NAME ="name";
 
 	private static final String REQ = "req";
@@ -93,7 +93,7 @@ public class ProjectResourceServlet extends HttpServlet {
 					switch (reqNo) {
 
 					// == folder apis
-					case GET_ALL_FOLDERS_JSON_REQ: {
+					case GET_ALL_CATEGORIES_JSON_REQ: {
 						System.out.println("==>");
 
 						conn = ConnPool.getInstance().getConnection();
@@ -101,6 +101,10 @@ public class ProjectResourceServlet extends HttpServlet {
 						List<Category> categoryList = categoryResProvider
 								.getAllCategories(conn);
 						String resultJson = Category.toJson(categoryList);
+
+						if(resultJson == null ){
+							System.out.println(categoryList.toString());
+						}
 
 						if (resultJson != null && !resultJson.isEmpty()) {
 							respPage = resultJson;
