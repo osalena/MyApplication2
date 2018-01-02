@@ -20,7 +20,7 @@ public class MyConversationsActivity extends AppCompatActivity {
 
         /* get current user info */
         Bundle b = getIntent().getExtras();
-        curUser= MyInfoManager.getInstance().readUser(b.getInt("user"));
+        curUser= MyInfoManager.getInstance().readUser(String.valueOf(b.getInt("user")));
 
         /* to display BACK button */
         android.app.ActionBar actionBar = getActionBar();

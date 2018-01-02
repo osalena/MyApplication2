@@ -16,7 +16,7 @@ import java.util.List;
 
 public class MyDataBase extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "MyDB";
 
     // Users
@@ -35,8 +35,7 @@ public class MyDataBase extends SQLiteOpenHelper {
     private static final String RECEIPT_COLUMN_DESCRIPTION = "description";
     private static final String RECEIPT_COLUMN__IMAGE1 = "image1";
     private static final String RECEIPT_COLUMN_USERID = "user_id";
-    //private static final String RECEIPT_COLUMN_CATEGORY = "category";
-    //private static final String RECEIPT_COLUMN_DATE = "date";
+   // private static final String RECEIPT_COLUMN_DATE = "date";
     private static final String[] TABLE_RECEIPT_COLUMNS = {RECEIPT_COLUMN_ID, RECEIPT_COLUMN_TITLE,
             RECEIPT_COLUMN_DESCRIPTION, RECEIPT_COLUMN__IMAGE1, RECEIPT_COLUMN_USERID};
 
@@ -69,7 +68,16 @@ public class MyDataBase extends SQLiteOpenHelper {
                         + RECEIPT_COLUMN_DESCRIPTION + " TEXT, "
                         + RECEIPT_COLUMN__IMAGE1 + " BLOB, "
                         + RECEIPT_COLUMN_USERID + " INTEGER)";
+                /*String CREATE_RECEIPTS_TABLE = "create table if not exists " + TABLE_RECEIPTS_NAME + " ( "
+                        + RECEIPT_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                        + RECEIPT_COLUMN_TITLE + " TEXT, "
+                        + RECEIPT_COLUMN_DESCRIPTION + " TEXT, "
+                        + RECEIPT_COLUMN__IMAGE1 + " BLOB, "
+                        + RECEIPT_COLUMN_USERID + " INTEGER"
+                        + RECEIPT_COLUMN_DATE + " DATETIME DEFAULT CURRENT_TIMESTAMP)"; */
                 db.execSQL(CREATE_RECEIPTS_TABLE);
+                System.out.println("create DBBBBBBBBBBBB");
+                //System.out.println("==>");
             }
 
             if (!isTableExist(TABLE_USERS_NAME, db)) {
@@ -89,6 +97,21 @@ public class MyDataBase extends SQLiteOpenHelper {
         }
     }
 
+    public void deleteTable(String t){
+        db.execSQL("DROP TABLE IF EXISTS receipts");
+        System.out.println("DELETE");
+    }
+
+    /*public void createTable (String t){
+        String CREATE_RECEIPTS_TABLE = "create table if not exists " + TABLE_RECEIPTS_NAME + " ( "
+                + RECEIPT_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + RECEIPT_COLUMN_TITLE + " TEXT, "
+                + RECEIPT_COLUMN_DESCRIPTION + " TEXT, "
+                + RECEIPT_COLUMN__IMAGE1 + " BLOB, "
+                + RECEIPT_COLUMN_USERID + " INTEGER"
+                + RECEIPT_COLUMN_DATE + " DATETIME DEFAULT CURRENT_TIMESTAMP)";
+        db.execSQL(CREATE_RECEIPTS_TABLE);
+    } */
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -124,7 +147,7 @@ public class MyDataBase extends SQLiteOpenHelper {
         //onCreate(db);
     }
 
-    public void createReceipt(InfoUser user,InfoReceipt receipt) {
+    public void createReceipt(InfoUser user, InfoReceipt receipt) {
 
         try {
             // make values to be inserted
@@ -134,7 +157,7 @@ public class MyDataBase extends SQLiteOpenHelper {
             values.put(RECEIPT_COLUMN_USERID, user.getId());
 
             //images
-            Bitmap image1 = receipt.getImage1();
+            Bitmap image1 = receipt.getImage();
             if (image1 != null) {
                 byte[] data = getBitmapAsByteArray(image1);
                 if (data != null && data.length > 0) {
@@ -142,6 +165,7 @@ public class MyDataBase extends SQLiteOpenHelper {
                 }
             }
 
+            //values.put( RECEIPT_COLUMN_DATE, " time('now') " );
             // insert item
             db.insert(TABLE_RECEIPTS_NAME, null, values);
 
@@ -150,6 +174,38 @@ public class MyDataBase extends SQLiteOpenHelper {
             t.printStackTrace();
         }
 
+
+    }
+
+    public boolean createReceipt(InfoReceipt receipt) {
+
+        try {
+            // make values to be inserted
+            ContentValues values = new ContentValues();
+            values.put(RECEIPT_COLUMN_TITLE, receipt.getTitle());
+            values.put(RECEIPT_COLUMN_DESCRIPTION, receipt.getDescription());
+            values.put(RECEIPT_COLUMN_USERID, receipt.getUserId());
+
+            //images
+            Bitmap image1 = receipt.getImage();
+            if (image1 != null) {
+                byte[] data = getBitmapAsByteArray(image1);
+                if (data != null && data.length > 0) {
+                    values.put(RECEIPT_COLUMN__IMAGE1, data);
+                }
+            }
+
+            //values.put( RECEIPT_COLUMN_DATE, " time('now') " );
+            // insert item
+            db.insert(TABLE_RECEIPTS_NAME, null, values);
+            return true;
+
+
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+
+        return false;
 
     }
 
@@ -183,7 +239,7 @@ public class MyDataBase extends SQLiteOpenHelper {
     }
 
 
-    public InfoReceipt readReceipt(int id) {
+    public InfoReceipt readReceipt(String id) {
         InfoReceipt receipt = null;
         Cursor cursor = null;
         try {
@@ -193,7 +249,7 @@ public class MyDataBase extends SQLiteOpenHelper {
             cursor = db
                     .query(TABLE_RECEIPTS_NAME,
                             TABLE_RECEIPT_COLUMNS, RECEIPT_COLUMN_ID + " = ?",
-                            new String[] { String.valueOf(id) }, null, null,
+                            new String[] { id }, null, null,
                             null, null);
 
 
@@ -204,7 +260,7 @@ public class MyDataBase extends SQLiteOpenHelper {
                 cursor.moveToFirst();
 
                 receipt = new InfoReceipt();
-                receipt.setId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(RECEIPT_COLUMN_ID))));
+                receipt.setId(cursor.getString(cursor.getColumnIndex(RECEIPT_COLUMN_ID)));
                 receipt.setTitle(cursor.getString(1));
                 receipt.setDescription(cursor.getString(2));
 
@@ -213,14 +269,14 @@ public class MyDataBase extends SQLiteOpenHelper {
                 if (img1Byte != null && img1Byte.length > 0) {
                     Bitmap image1 = BitmapFactory.decodeByteArray(img1Byte, 0, img1Byte.length);
                     if (image1 != null) {
-                        receipt.setImage1(image1);
+                        receipt.setImage(image1);
                     }
                 }
 
 
-                receipt.setUserId(Integer.parseInt(cursor.getString(4)));
+                receipt.setUserId(cursor.getString(4));
                 //receipt.setCategory(cursor.getString(5));
-                //receipt.setDate(cursor.getString(6));
+                //receipt.setDate(cursor.getString(5));
             }
         } catch (Throwable t) {
             t.printStackTrace();
@@ -277,7 +333,7 @@ public class MyDataBase extends SQLiteOpenHelper {
         return user;
     }
 
-    public InfoUser readUser(int id) {
+    public InfoUser readUser(String id) {
         InfoUser user = null;
         Cursor cursor = null;
         try {
@@ -287,7 +343,7 @@ public class MyDataBase extends SQLiteOpenHelper {
             cursor = db
                     .query(TABLE_USERS_NAME, // a. table
                             TABLE_USER_COLUMNS, RECEIPT_COLUMN_ID + " = ?",
-                            new String[] { String.valueOf(id) }, null, null,
+                            new String[] { id }, null, null,
                             null, null);
 
             // if results !=null, parse the first one
@@ -350,7 +406,7 @@ public class MyDataBase extends SQLiteOpenHelper {
     private InfoReceipt cursorToReceipt(Cursor cursor) {
         InfoReceipt result = new InfoReceipt();
         try {
-            result.setId(Integer.parseInt(cursor.getString(0)));
+            result.setId(cursor.getString(0));
             result.setTitle(cursor.getString(1));
             result.setDescription(cursor.getString(2));
 
@@ -359,11 +415,12 @@ public class MyDataBase extends SQLiteOpenHelper {
             if (img1Byte != null && img1Byte.length > 0) {
                 Bitmap image1 = BitmapFactory.decodeByteArray(img1Byte, 0, img1Byte.length);
                 if (image1 != null) {
-                    result.setImage1(image1);
+                    result.setImage(image1);
                 }
             }
 
-            result.setUserId(Integer.parseInt(cursor.getString(4)));
+            result.setUserId(cursor.getString(4));
+            //result.setDate(cursor.getString(5));
         } catch (Throwable t) {
             t.printStackTrace();
         }
@@ -427,7 +484,7 @@ public class MyDataBase extends SQLiteOpenHelper {
             values.put(RECEIPT_COLUMN_DESCRIPTION, receipt.getDescription());
 
             //images
-            Bitmap image1 = receipt.getImage1();
+            Bitmap image1 = receipt.getImage();
             if (image1 != null) {
                 byte[] data = getBitmapAsByteArray(image1);
                 if (data != null && data.length > 0) {

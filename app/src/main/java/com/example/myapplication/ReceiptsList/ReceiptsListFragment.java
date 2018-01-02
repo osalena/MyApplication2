@@ -37,7 +37,7 @@ public class ReceiptsListFragment extends Fragment {
         Bundle bundle    = this.getArguments();
         context          = rootView.getContext();
         receiptsList     = (ListView)rootView.findViewById(R.id.folderList);
-        curUser          = MyInfoManager.getInstance().readUser(bundle.getInt("user"));
+        curUser          = MyInfoManager.getInstance().readUser(String.valueOf(bundle.getInt("user")));
 
 
 

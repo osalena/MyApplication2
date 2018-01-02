@@ -37,7 +37,7 @@ public class MyReceiptsActivity extends AppCompatActivity {
 
         /* get current user info */
         Bundle b = getIntent().getExtras();
-        curUser= MyInfoManager.getInstance().readUser(b.getInt("user"));
+        curUser= MyInfoManager.getInstance().readUser(String.valueOf(b.getInt("user")));
         //Toast.makeText(MyReceiptsActivity.this, curUser.getUsername(), Toast.LENGTH_SHORT).show();
 
         /* to define fragment */

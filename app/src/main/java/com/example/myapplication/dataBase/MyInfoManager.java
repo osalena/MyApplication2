@@ -2,11 +2,16 @@ package com.example.myapplication.dataBase;
 
 
 import android.content.Context;
+import android.widget.Toast;
 
+import com.example.myapplication.utils.NetworkResListener;
+import com.example.myapplication.utils.ResStatus;
+
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyInfoManager {
+public class MyInfoManager implements NetworkResListener {
     private static MyInfoManager instance = null;
     private Context context = null;
     private MyDataBase db = null;
@@ -79,7 +84,15 @@ public class MyInfoManager {
         }
     }
 
-    public InfoReceipt readReceipt(int id) {
+    public void deleteTable(String tableName){
+        db.deleteTable(tableName);
+    }
+
+    /*public void createTable(String t){
+        db.createTable(t);
+    }*/
+
+    public InfoReceipt readReceipt(String id) {
         InfoReceipt result = null;
         if (db != null) {
             result = db.readReceipt(id);
@@ -87,7 +100,7 @@ public class MyInfoManager {
         return result;
     }
 
-    public InfoUser readUser(int id) {
+    public InfoUser readUser(String id) {
         InfoUser result = null;
         if (db != null) {
             result = db.readUser(id);
@@ -162,5 +175,68 @@ public class MyInfoManager {
 
     public void deleteSelectedUser(){
         deleteUser(selectedUser);
+    }
+
+    @Override
+    public void onPreUpdate() {
+        Toast.makeText(context,"Sync stated...",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onPostUpdate(byte[] res, ResStatus status) {
+        Toast.makeText(context,"Sync finished...status " + status.toString(),Toast.LENGTH_SHORT).show();
+    }
+
+
+    public void updateResources(byte[] res) {
+        if(res==null){
+            return;
+        }
+        try {
+            String content = new String(res, "UTF-8");
+            List<InfoReceipt> list = InfoReceipt.parseJson(content);
+            if(list!=null && list.size()>0) {
+                for(InfoReceipt r: list) {
+                    syncCreateReceipt(r);
+                }
+
+            }
+            } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        catch(Throwable t){
+            t.printStackTrace();
+        }
+
+    }
+
+
+    private boolean syncUpdateReceipt(InfoReceipt r) {
+        boolean res = false;
+        if (db != null) {
+            if(!db.createReceipt(r)){
+                db.updateReceipt(r);
+                res = true;
+            }
+            else{
+                res = true;
+            }
+        }
+        return res;
+    }
+
+
+    private boolean syncCreateReceipt(InfoReceipt r) {
+        boolean res = false;
+        if (db != null) {
+            if(!db.createReceipt(r)){
+                db.updateReceipt(r);
+                res = true;
+            }
+            else{
+                res = true;
+            }
+        }
+        return res;
     }
 }

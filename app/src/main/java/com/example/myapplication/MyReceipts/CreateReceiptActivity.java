@@ -44,7 +44,7 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
     private Menu        menu;
     /* receipt ID from bind
     * -1 for new receipt*/
-    private int         id;
+    private String      id;
     /*1 for non-editable*/
     private int         edit_flag = 0;
 
@@ -74,20 +74,23 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
         loadImageButton.setOnClickListener(cameraOnClickListener);
 
         Bundle b = getIntent().getExtras();
-        id = b.getInt("id");
+        id = b.getString("id");
         edit_flag = b.getInt("edit_flag");
          /* get current user info */
-        curUser= MyInfoManager.getInstance().readUser(b.getInt("user"));
+        curUser= MyInfoManager.getInstance().readUser(String.valueOf(b.getInt("user")));
 
 
         /* existing receipt to edit*/
-        if(id > -1){
+        try {
+            //if(Integer.getInteger(id) > -1){
             InfoReceipt rec = MyInfoManager.getInstance().readReceipt(id);
-            imageView.setImageBitmap(rec.getImage1());
+            imageView.setImageBitmap(rec.getImage());
             editTextTitle.setText(rec.getTitle());
             editTextDescription.setText(rec.getDescription());
+        }
+        catch(NullPointerException e) {
             /* to display Receipt details without editing */
-            if(edit_flag == 1) {
+            if (edit_flag == 1) {
                 editTextTitle.setEnabled(false);
                 editTextDescription.setEnabled(false);
                 imageView.setClickable(false);
@@ -95,6 +98,7 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
                 //Toast.makeText(CreateReceiptActivity.this, rec.getDate(), Toast.LENGTH_LONG).show();
             }
         }
+       // }
 
 
 
@@ -132,7 +136,7 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
                 return true;
             case R.id.create_rec_save:
                 /* new receipt to add */
-                if (id == -1 && edit_flag == 0) {
+                if (id.equals("-1") && edit_flag == 0) {
                     /* photo is empty*/
                     if(bitmap == null){
                         BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
@@ -143,7 +147,7 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
                     Toast.makeText(CreateReceiptActivity.this, getResources().getText(R.string.cr_recipe_save), Toast.LENGTH_SHORT).show();
                 }
                 /* existing receipt to edit */
-                else if (id > -1 && edit_flag == 0){
+                else if (id.equals("-1") && edit_flag == 0){
                     BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
                     Bitmap bitmap2 = drawable.getBitmap();
                     InfoReceipt updatedReceipt =  new InfoReceipt(editTextTitle.getText().toString(), editTextDescription.getText().toString(), bitmap2);

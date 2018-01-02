@@ -4,6 +4,7 @@ package com.example.myapplication;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -24,32 +25,45 @@ import com.example.myapplication.MyReceipts.MyReceiptsActivity;
 import com.example.myapplication.ReceiptsList.ReceiptsListFragment;
 import com.example.myapplication.dataBase.InfoUser;
 import com.example.myapplication.dataBase.MyInfoManager;
+import com.example.myapplication.utils.NetworkConnector;
+import com.example.myapplication.utils.NetworkResListener;
+import com.example.myapplication.utils.ResStatus;
 
 
-public class activity_main_cookpad extends AppCompatActivity {
+public class activity_main_cookpad extends AppCompatActivity implements NetworkResListener {
 
     private Button               trending;
     private SearchView           searchView;
     private FloatingActionButton actionButton;
     private ActionBar            actionBar;
     private InfoUser             curUser;
+    private ProgressDialog       progressDialog = null;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //to open DB
+        MyInfoManager.getInstance().openDataBase(this);
+
+        /*to define neetwork connection and listener */
+        NetworkConnector.getInstance().setContext(this);
+        NetworkConnector.getInstance().registerListener(this);
+        NetworkConnector.getInstance().update();
+
+        /* to define layout */
         setContentView(R.layout.activity_my);
 
         trending        =   (Button)findViewById(R.id.btn2);
         searchView      =   (SearchView)findViewById(R.id.search);
         actionButton    =   (FloatingActionButton)findViewById(R.id.myFAB);
 
-        //to open DB
-        MyInfoManager.getInstance().openDataBase(this);
+
 
         /* get current user info */
         Bundle b = getIntent().getExtras();
-        curUser= MyInfoManager.getInstance().readUser(b.getInt("user"));
+        curUser= MyInfoManager.getInstance().readUser(String.valueOf(b.getInt("user")));
 
         /* to display Category List */
         getCategories();
@@ -121,7 +135,7 @@ public class activity_main_cookpad extends AppCompatActivity {
 
     public void createNewReceiptOnClick (View view) {
         Intent intent = new Intent(activity_main_cookpad.this, CreateReceiptActivity.class);
-        intent.putExtra("id", -1);
+        intent.putExtra("id", "-1");
         intent.putExtra("user", curUser.getId());
         activity_main_cookpad.this.startActivity(intent);
     }
@@ -226,4 +240,38 @@ public class activity_main_cookpad extends AppCompatActivity {
         super.onPause();
     }
 
+    @Override
+    public void onPreUpdate() {
+       progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Updating resources");
+        progressDialog.setMessage("Please wait...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+    }
+
+    @Override
+    public void onPostUpdate(byte[] res, ResStatus status) {
+        NetworkConnector.getInstance().unregisterListener(this);
+        //to open DB
+        MyInfoManager.getInstance().openDataBase(this);
+
+       if(status == ResStatus.SUCCESS){
+
+            MyInfoManager.getInstance().updateResources(res);
+           Toast.makeText(this, "download ok...", Toast.LENGTH_LONG).show();
+        }
+        else{
+            Toast.makeText(this,"download failed...", Toast.LENGTH_LONG).show();
+        }
+
+        showFragment1OnClick(trending);
+
+        Toast.makeText(this, "yes", Toast.LENGTH_LONG).show();
+
+        //hideKeyboard();
+
+
+        progressDialog.dismiss();
+
+    }
 }

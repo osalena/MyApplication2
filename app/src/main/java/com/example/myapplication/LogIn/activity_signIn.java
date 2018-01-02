@@ -52,7 +52,7 @@ public class activity_signIn extends AppCompatActivity {
 
         /* get current user info */
         Bundle b = getIntent().getExtras();
-        curUser= MyInfoManager.getInstance().readUser(b.getInt("user"));
+        curUser= MyInfoManager.getInstance().readUser(String.valueOf(b.getInt("user")));
         //Toast.makeText(activity_signIn.this, curUser.getUsername(), Toast.LENGTH_SHORT).show();
 
         input_username.setText(curUser.getUsername());

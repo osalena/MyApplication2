@@ -91,9 +91,14 @@ public  class ReceiptsDataAdapter extends ArrayAdapter<InfoReceipt> {
         userImage       =   (ImageView) rootView.findViewById(R.id.user_image);
         poster          =   (TextView) rootView.findViewById(R.id.poster);
         title.setText(currentReceipt.getTitle());
-        receiptImage.setImageBitmap(currentReceipt.getImage1());
+        receiptImage.setImageBitmap(currentReceipt.getImage());
+        try{
         userImage.setImageBitmap(MyInfoManager.getInstance().readUser(currentReceipt.getUserId()).getImage1());
-        poster.setText(MyInfoManager.getInstance().readUser(currentReceipt.getUserId()).getUsername());
+        poster.setText(MyInfoManager.getInstance().readUser(currentReceipt.getUserId()).getUsername());}
+        catch (NullPointerException e){
+            userImage = null;
+            poster = null;
+        }
         TextView date = (TextView) rootView.findViewById(R.id.date);
         //TO DO
         date.setText(null);
@@ -140,7 +145,7 @@ public  class ReceiptsDataAdapter extends ArrayAdapter<InfoReceipt> {
                 FileOutputStream fOut = null;
                 try {
                     fOut = new FileOutputStream(file);
-                    Bitmap myPic =  currentReceipt.getImage1();
+                    Bitmap myPic =  currentReceipt.getImage();
                     myPic.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
                     fOut.flush();
                     fOut.close();

@@ -38,7 +38,7 @@ public class MyReceiptsFragment     extends Fragment {
         MyInfoManager.getInstance().openDataBase(context);
         /* get user ID from parent Activity */
         Bundle bundle           = this.getArguments();
-        curUser                 = MyInfoManager.getInstance().readUser(bundle.getInt("user"));
+        curUser                 = MyInfoManager.getInstance().readUser(String.valueOf(bundle.getInt("user")));
         receiptsList            = (ListView) rootView.findViewById(R.id.receipt_recycle);
         list                    = MyInfoManager.getInstance().getUserReceipt(curUser);
         //List<InfoReceipt> list  = MyInfoManager.getInstance().getAllReceipts();

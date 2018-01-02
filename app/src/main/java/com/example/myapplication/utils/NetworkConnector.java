@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import android.os.Handler;
 
 import com.example.myapplication.dataBase.InfoCategory;
+import com.example.myapplication.dataBase.InfoReceipt;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -22,35 +24,37 @@ import java.util.List;
 public class NetworkConnector {
 
 
-    private  final String BASE_URL = "http://10.0.2.2:8080/projres";
+    private  final String BASE_URL = "http://192.168.1.30:8080/projres";
     private List<NetworkResListener> listeners = Collections.synchronizedList(new ArrayList<NetworkResListener>());
     private Context ctx;
     private static NetworkConnector instance;
 
-    public static final String GET_ALL_CATEGORY_JSON_REQ = "0";
-    //public static final String INSERT_FOLDER_REQ = "1";
-    //public static final String DELETE_FOLDER_REQ = "2";
-    //public static final String INSERT_ITEM_REQ = "3";
-    //public static final String DELETE_ITEM_REQ = "4";
-    //public static final String GET_ITEM_IMAGE_REQ = "5";
+    public static final String GET_ALL_RECEIPTS_JSON_REQ = "0";
+    //private static final int INSERT_FOLDER_REQ = 1;
+    //private static final int DELETE_FOLDER_REQ = 2;
+    private static final String INSERT_RECEIPT_REQ = "3";
+    private static final String DELETE_RECEIPT_REQ = "4";
+    private static final String GET_RECEIPT_IMAGE_REQ = "5";
+    //private static final int GET_RECEIPTS_OF_USER_JSON_REQ = 6;
+    private static final String GET_FILE_FROM_FILESYSTEM_REQ = "7";
 
-    //public static final String FOLDER_ID = "f_id";
-    //public static final String FOLDER_TITLE = "f_title";
+    private static final String USER_ID = "u_id";
+    private static final String USER_NAME = "u_name";
 
     public static final String RESOURCE_FAIL_TAG = "{\"result_code\":0}";
     public static final String RESOURCE_SUCCESS_TAG = "{\"result_code\":1}";
 
-   // public static final String ITEM_ID = "it_id";
-   // public static final String ITEM_TITLE = "it_title";
-   // public static final String ITEM_DESCRIPTION = "it_desc";
-   // public static final String ITEM_FOLDER_ID = "it_fid";
+    public static final String RECEIPT_ID = "r_id";
+    public static final String RECEIPT_TITLE = "r_title";
+    public static final String RECEIPT_DESCRIPTION = "r_desc";
+    public static final String RECEIPT_USER_ID = "r_uid";
 
     public static final String REQ = "req";
 
    private final int RETRY_TIMES = 2;
 
 
-    public void sendRequestToServer(String requestCode, InfoCategory data){
+    public void sendRequestToServer(String requestCode, InfoReceipt data){
 
         if(data==null){
             return;
@@ -62,25 +66,25 @@ public class NetworkConnector {
         Uri.Builder builder = new Uri.Builder();
 
         switch (requestCode){
-           /* case INSERT_ITEM_REQ:{
+            case INSERT_RECEIPT_REQ:{
                 builder.appendQueryParameter(REQ , requestCode);
-                builder.appendQueryParameter(ITEM_ID , data.getId());
-                builder.appendQueryParameter(ITEM_TITLE , data.getTitle());
-                builder.appendQueryParameter(ITEM_DESCRIPTION , data.getDescription());
-                builder.appendQueryParameter(ITEM_FOLDER_ID , data.getFolderId());
+                builder.appendQueryParameter(RECEIPT_ID , String.valueOf(data.getId()));
+                builder.appendQueryParameter(RECEIPT_TITLE , data.getTitle());
+                builder.appendQueryParameter(RECEIPT_DESCRIPTION , data.getDescription());
+                builder.appendQueryParameter(RECEIPT_USER_ID , String.valueOf(data.getUserId()));
                 break;
-            }*/
-           /* case DELETE_ITEM_REQ:{
+            }
+            case DELETE_RECEIPT_REQ:{
                 builder.appendQueryParameter(REQ , requestCode);
-                builder.appendQueryParameter(ITEM_ID , data.getId());
+                builder.appendQueryParameter(RECEIPT_ID , String.valueOf(data.getId()));
                 break;
-            }*/
-           /* case GET_ITEM_IMAGE_REQ: {
+            }
+            case GET_RECEIPT_IMAGE_REQ: {
                 builder.appendQueryParameter(REQ , requestCode);
-                builder.appendQueryParameter(ITEM_ID , data.getId());
+                builder.appendQueryParameter(RECEIPT_ID , String.valueOf(data.getId()));
 
                 break;
-            }*/
+            }
         }
 
         String query = builder.build().getEncodedQuery();
@@ -94,7 +98,7 @@ public class NetworkConnector {
         NetworkTask networkTask = new NetworkTask();
 
         Uri.Builder builder = new Uri.Builder();
-        builder.appendQueryParameter(REQ , GET_ALL_CATEGORY_JSON_REQ);
+        builder.appendQueryParameter(REQ , GET_ALL_RECEIPTS_JSON_REQ);
         String query = builder.build().getEncodedQuery();
 
         networkTask.execute(query);

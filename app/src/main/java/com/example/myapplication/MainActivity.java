@@ -26,19 +26,32 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //this.deleteDatabase(MyInfoManager.getInstance().getDB().getDatabaseName());
+
         MyInfoManager.getInstance().openDataBase(this);
+
+        //this.deleteDatabase(MyInfoManager.getInstance().getDB().getDatabaseName());
+
+        //MyInfoManager.getInstance().createTable("t");
+
+        //db.execSQL("DROP TABLE IF EXISTS tablename");
+        //MyInfoManager.getInstance().openDataBase(this);
 
         setContentView(R.layout.activity_main);
         cont_textView=(TextView)findViewById(R.id.continue_textView);
         cont_textView.setOnClickListener(onClickListener);
 
+        //user = new InfoUser();
+
+        //Bitmap icon = BitmapFactory.decodeResource(getResources(),R.drawable.heart);
+        //user.setImage1(icon);
+       // user.setUsername("TESTUser");
+       // MyInfoManager.getInstance().createUser(user);
+
         /* test user */
         List<InfoUser> users = MyInfoManager.getInstance().getAllUsers();
-        user = users.get(2);
-        //Bitmap icon = BitmapFactory.decodeResource(getResources(),R.drawable.userpic);
-        //user.setImage1(icon);
-        //user.setUsername("TESTUser");
-        //MyInfoManager.getInstance().updateUser(user);
+        user = users.get(0);
+
         //if(user.getImage1() != null){
          //   Toast.makeText(MainActivity.this, "not null", Toast.LENGTH_SHORT).show();
         //}

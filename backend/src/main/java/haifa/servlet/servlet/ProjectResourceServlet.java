@@ -4,7 +4,9 @@ import haifa.servlet.database.CategoryResProvider;
 import haifa.servlet.database.ConnPool;
 
 
+import haifa.servlet.database.ReceiptResProvider;
 import haifa.servlet.objects.Category;
+import haifa.servlet.objects.Receipt;
 import haifa.servlet.utils.FilesUtils;
 
 import java.io.ByteArrayOutputStream;
@@ -32,25 +34,25 @@ public class ProjectResourceServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	// ========
-	private static final int GET_ALL_CATEGORIES_JSON_REQ = 0;
+	private static final int GET_ALL_RECEIPTS_JSON_REQ = 0;
 	//private static final int INSERT_FOLDER_REQ = 1;
 	//private static final int DELETE_FOLDER_REQ = 2;
-	//private static final int INSERT_ITEM_REQ = 3;
-	//private static final int DELETE_ITEM_REQ = 4;
-	//private static final int GET_ITEM_IMAGE_REQ = 5;
-	//private static final int GET_ITEMS_OF_FOLDER_JSON_REQ = 6;
+	private static final int INSERT_RECEIPT_REQ = 3;
+	private static final int DELETE_RECEIPT_REQ = 4;
+	private static final int GET_RECEIPT_IMAGE_REQ = 5;
+	//private static final int GET_RECEIPTS_OF_USER_JSON_REQ = 6;
 	private static final int GET_FILE_FROM_FILESYSTEM_REQ = 7;
 
-	//private static final String FOLDER_ID = "f_id";
-	//private static final String FOLDER_TITLE = "f_title";
+	private static final String USER_ID = "u_id";
+	private static final String USER_NAME = "u_name";
 
 	private static final String RESOURCE_FAIL_TAG = "{\"result_code\":0}";
 	private static final String RESOURCE_SUCCESS_TAG = "{\"result_code\":1}";
 
-	//private static final String ITEM_ID = "it_id";
-	//private static final String ITEM_TITLE = "it_title";
-	//private static final String ITEM_DESCRIPTION = "it_desc";
-	//private static final String ITEM_FOLDER_ID = "it_fid";
+	private static final String RECEIPT_ID = "rec_id";
+	private static final String RECEIPT_TITLE = "rec_title";
+	private static final String RECEIPT_DESCRIPTION = "rec_desc";
+	private static final String RECEIPT_USER_ID = "rec_uid";
 	private static final String FILE_NAME ="name";
 
 	private static final String REQ = "req";
@@ -93,17 +95,17 @@ public class ProjectResourceServlet extends HttpServlet {
 					switch (reqNo) {
 
 					// == folder apis
-					case GET_ALL_CATEGORIES_JSON_REQ: {
+					case GET_ALL_RECEIPTS_JSON_REQ: {
 						System.out.println("==>");
 
 						conn = ConnPool.getInstance().getConnection();
-						CategoryResProvider categoryResProvider = new CategoryResProvider();
-						List<Category> categoryList = categoryResProvider
-								.getAllCategories(conn);
-						String resultJson = Category.toJson(categoryList);
+						ReceiptResProvider receiptResProvider = new ReceiptResProvider();
+						List<Receipt> receiptList = receiptResProvider
+								.getAllReceipts(conn);
+						String resultJson = Receipt.toJson(receiptList);
 
 						if(resultJson == null ){
-							System.out.println(categoryList.toString());
+							System.out.println(receiptList.toString());
 						}
 
 						if (resultJson != null && !resultJson.isEmpty()) {
@@ -120,7 +122,7 @@ public class ProjectResourceServlet extends HttpServlet {
 						break;
 					}
 
-				/*	case INSERT_FOLDER_REQ: {
+					/*case INSERT_FOLDER_REQ: {
 						String id = req.getParameter(FOLDER_ID);
 						String title = req.getParameter(FOLDER_TITLE);
 						respPage = RESOURCE_FAIL_TAG;
@@ -157,18 +159,18 @@ public class ProjectResourceServlet extends HttpServlet {
 
 						retry = 0;
 						break;
-					}
+					} */
 					// == end folder apis
 
 					// == item apis
-					case INSERT_ITEM_REQ: {
-						String id = req.getParameter(ITEM_ID);
+					case INSERT_RECEIPT_REQ: {
+						String id = req.getParameter(RECEIPT_ID);
 
-						String title = req.getParameter(ITEM_TITLE);
+						String title = req.getParameter(RECEIPT_TITLE);
 
-						String descrpition = req.getParameter(ITEM_DESCRIPTION);
+						String descrpition = req.getParameter(RECEIPT_DESCRIPTION);
 
-						String folderId = req.getParameter(ITEM_FOLDER_ID);
+						String userId = req.getParameter(RECEIPT_USER_ID);
 
 						ServletInputStream isServ = req.getInputStream();
 
@@ -187,11 +189,11 @@ public class ProjectResourceServlet extends HttpServlet {
 						resp.addHeader("Content-Type",
 								"application/json; charset=UTF-8");
 						conn = ConnPool.getInstance().getConnection();
-						ItemsResProvider itemsResProvider = new ItemsResProvider();
+						ReceiptResProvider receiptResProvider = new ReceiptResProvider();
 
-						Item item = new Item(id, title, descrpition, imageBlob,
-								folderId);
-						if (itemsResProvider.insertItem(item, conn)) {
+						Receipt receipt = new Receipt(id, title, descrpition, imageBlob,
+								userId);
+						if (receiptResProvider.insertReceipt(receipt, conn)) {
 							respPage = RESOURCE_SUCCESS_TAG;
 						}
 						PrintWriter pw = resp.getWriter();
@@ -201,15 +203,15 @@ public class ProjectResourceServlet extends HttpServlet {
 						break;
 					}
 
-					case DELETE_ITEM_REQ: {
-						String id = req.getParameter(ITEM_ID);
+					case DELETE_RECEIPT_REQ: {
+						String id = req.getParameter(RECEIPT_ID);
 						respPage = RESOURCE_FAIL_TAG;
 						resp.addHeader("Content-Type",
 								"application/json; charset=UTF-8");
 						conn = ConnPool.getInstance().getConnection();
-						ItemsResProvider itemsResProvider = new ItemsResProvider();
-						Item item = new Item(id);
-						if (itemsResProvider.deleteItem(item, conn)) {
+						ReceiptResProvider itemsResProvider = new ReceiptResProvider();
+						Receipt receipt = new Receipt(id);
+						if (itemsResProvider.deleteReceipt(receipt, conn)) {
 							respPage = RESOURCE_SUCCESS_TAG;
 						}
 						PrintWriter pw = resp.getWriter();
@@ -219,12 +221,12 @@ public class ProjectResourceServlet extends HttpServlet {
 						break;
 					}
 
-					case GET_ITEMS_OF_FOLDER_JSON_REQ: {
+					/*case GET_RECEIPTS_OF_USER_JSON_REQ: {
 
-						String id = req.getParameter(FOLDER_ID);
+						String id = req.getParameter(USER_ID);
 						conn = ConnPool.getInstance().getConnection();
-						ItemsResProvider itemsResProvider = new ItemsResProvider();
-						Folder folder = new Folder(id);
+						ReceiptResProvider itemsResProvider = new ReceiptResProvider();
+						User folder = new User(id);
 						List<Item> itemsList = itemsResProvider.getAllItems(
 								folder, conn);
 						String resultJson = Item.toJson(itemsList);
@@ -241,16 +243,16 @@ public class ProjectResourceServlet extends HttpServlet {
 
 						retry = 0;
 						break;
-					}
+					}*/
 
-					case GET_ITEM_IMAGE_REQ: {
-						String id = req.getParameter(ITEM_ID);
+					case GET_RECEIPT_IMAGE_REQ: {
+						String id = req.getParameter(RECEIPT_ID);
 						respPage = RESOURCE_FAIL_TAG;
 
 						conn = ConnPool.getInstance().getConnection();
-						ItemsResProvider itemsResProvider = new ItemsResProvider();
+						ReceiptResProvider receiptResProvider = new ReceiptResProvider();
 
-						byte[] imgBlob = itemsResProvider.getImage(id, conn);
+						byte[] imgBlob = receiptResProvider.getImage(id, conn);
 
 						if (imgBlob != null && imgBlob.length > 0) {
 							ServletOutputStream os = resp.getOutputStream();
@@ -261,7 +263,7 @@ public class ProjectResourceServlet extends HttpServlet {
 
 						retry = 0;
 						break;
-					}*/
+					}
 					
 					case GET_FILE_FROM_FILESYSTEM_REQ: {
 						String fileName = req.getParameter(FILE_NAME);
