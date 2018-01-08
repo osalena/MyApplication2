@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.myapplication.Interface.LoadListContainer;
 import com.example.myapplication.LogIn.LoginActivity;
 import com.example.myapplication.dataBase.InfoUser;
 import com.example.myapplication.dataBase.MyInfoManager;
@@ -41,12 +42,12 @@ public class MainActivity extends AppCompatActivity {
         cont_textView=(TextView)findViewById(R.id.continue_textView);
         cont_textView.setOnClickListener(onClickListener);
 
-        //user = new InfoUser();
+        user = new InfoUser();
 
-        //Bitmap icon = BitmapFactory.decodeResource(getResources(),R.drawable.heart);
-        //user.setImage1(icon);
-       // user.setUsername("TESTUser");
-       // MyInfoManager.getInstance().createUser(user);
+       Bitmap icon = BitmapFactory.decodeResource(getResources(),R.drawable.heart);
+       user.setImage1(icon);
+       user.setUsername("TESTUser");
+        MyInfoManager.getInstance().createUser(user);
 
         /* test user */
         List<InfoUser> users = MyInfoManager.getInstance().getAllUsers();
@@ -56,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
          //   Toast.makeText(MainActivity.this, "not null", Toast.LENGTH_SHORT).show();
         //}
 
-
+        LoadListContainer.setCtx(this);
 
     }
 

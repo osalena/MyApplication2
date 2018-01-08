@@ -40,10 +40,11 @@ public class Receipt {
 	}
 
 	public Receipt(String id, String title, String description, byte[] image1, String userID) {
+		this.id = id;
 		this.title = title;
 		this.description = description;
 		this.image1 = image1;
-		this.date = date;
+		this.userId=userID;
 	}
 
 	public String getId() {
@@ -112,7 +113,7 @@ public class Receipt {
 		iObj.put("id", getId());
 		iObj.put("title", getTitle());
 		iObj.put("description", getDescription());
-		iObj.put("img", isImageExists());
+		//iObj.put("img", isImageExists());
 		iObj.put("userId", getUserId());
 
 		return iObj;

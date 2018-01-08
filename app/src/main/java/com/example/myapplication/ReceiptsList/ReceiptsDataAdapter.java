@@ -93,9 +93,11 @@ public  class ReceiptsDataAdapter extends ArrayAdapter<InfoReceipt> {
         title.setText(currentReceipt.getTitle());
         receiptImage.setImageBitmap(currentReceipt.getImage());
         try{
-        userImage.setImageBitmap(MyInfoManager.getInstance().readUser(currentReceipt.getUserId()).getImage1());
-        poster.setText(MyInfoManager.getInstance().readUser(currentReceipt.getUserId()).getUsername());}
-        catch (NullPointerException e){
+        //userImage.setImageBitmap(MyInfoManager.getInstance().readUser(currentReceipt.getUserId()).getImage1());
+            userImage.setImageResource(R.drawable.gallery_photo);
+            //poster.setText(MyInfoManager.getInstance().readUser(currentReceipt.getUserId()).getUsername());
+            poster.setText("aaa");}
+        catch (NullPointerException|IllegalArgumentException e){
             userImage = null;
             poster = null;
         }

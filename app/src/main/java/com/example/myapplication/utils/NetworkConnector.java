@@ -24,7 +24,7 @@ import java.util.List;
 public class NetworkConnector {
 
 
-    private  final String BASE_URL = "http://192.168.1.30:8080/projres";
+    private  final String BASE_URL = "http://172.20.10.2:8080/projres";
     private List<NetworkResListener> listeners = Collections.synchronizedList(new ArrayList<NetworkResListener>());
     private Context ctx;
     private static NetworkConnector instance;
@@ -32,9 +32,9 @@ public class NetworkConnector {
     public static final String GET_ALL_RECEIPTS_JSON_REQ = "0";
     //private static final int INSERT_FOLDER_REQ = 1;
     //private static final int DELETE_FOLDER_REQ = 2;
-    private static final String INSERT_RECEIPT_REQ = "3";
-    private static final String DELETE_RECEIPT_REQ = "4";
-    private static final String GET_RECEIPT_IMAGE_REQ = "5";
+    public static final String INSERT_RECEIPT_REQ = "3";
+    public static final String DELETE_RECEIPT_REQ = "4";
+    public static final String GET_RECEIPT_IMAGE_REQ = "5";
     //private static final int GET_RECEIPTS_OF_USER_JSON_REQ = 6;
     private static final String GET_FILE_FROM_FILESYSTEM_REQ = "7";
 
@@ -44,10 +44,10 @@ public class NetworkConnector {
     public static final String RESOURCE_FAIL_TAG = "{\"result_code\":0}";
     public static final String RESOURCE_SUCCESS_TAG = "{\"result_code\":1}";
 
-    public static final String RECEIPT_ID = "r_id";
-    public static final String RECEIPT_TITLE = "r_title";
-    public static final String RECEIPT_DESCRIPTION = "r_desc";
-    public static final String RECEIPT_USER_ID = "r_uid";
+    public static final String RECEIPT_ID = "rec_id";
+    public static final String RECEIPT_TITLE = "rec_title";
+    public static final String RECEIPT_DESCRIPTION = "rec_desc";
+    public static final String RECEIPT_USER_ID = "rec_uid";
 
     public static final String REQ = "req";
 
@@ -68,7 +68,8 @@ public class NetworkConnector {
         switch (requestCode){
             case INSERT_RECEIPT_REQ:{
                 builder.appendQueryParameter(REQ , requestCode);
-                builder.appendQueryParameter(RECEIPT_ID , String.valueOf(data.getId()));
+                //builder.appendQueryParameter(RECEIPT_ID , String.valueOf(data.getId()));
+                builder.appendQueryParameter(RECEIPT_ID , String.valueOf(0));
                 builder.appendQueryParameter(RECEIPT_TITLE , data.getTitle());
                 builder.appendQueryParameter(RECEIPT_DESCRIPTION , data.getDescription());
                 builder.appendQueryParameter(RECEIPT_USER_ID , String.valueOf(data.getUserId()));
@@ -84,6 +85,13 @@ public class NetworkConnector {
                 builder.appendQueryParameter(RECEIPT_ID , String.valueOf(data.getId()));
 
                 break;
+            }
+            case GET_ALL_RECEIPTS_JSON_REQ:{
+
+                builder.appendQueryParameter(REQ , GET_ALL_RECEIPTS_JSON_REQ);
+                String query = builder.build().getEncodedQuery();
+
+
             }
         }
 

@@ -46,6 +46,7 @@ public class ReceiptResProvider {
 			while (rs.next()) {
 
 				String id = rs.getString(1);
+				//System.out.println(id);
 				String title = rs.getString(2);
 				String description = rs.getString(3);
 
@@ -55,7 +56,7 @@ public class ReceiptResProvider {
 					image = imageBlob.getBytes(1, (int) imageBlob.length());
 				}
 
-
+	System.out.println("NULL PIC");
 
 				String userId = rs.getString(5);
 				Receipt item = new Receipt(id, title, description, image, userId);
@@ -178,7 +179,7 @@ public class ReceiptResProvider {
 
 
 			stt = (PreparedStatement) conn.prepareStatement(select_sql);
-			stt.setString(1, id);
+			stt.setInt(1, Integer.valueOf(id));
 
 			if (stt.execute()) {
 				rs1 = stt.getResultSet();
@@ -200,7 +201,7 @@ public class ReceiptResProvider {
 
 
 
-					ps.setString(4, userId);
+					ps.setInt(4, Integer.valueOf(userId));
 
 					// where
 					ps.setString(5, id);

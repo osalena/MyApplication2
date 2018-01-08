@@ -147,8 +147,8 @@ public class MyDataBase extends SQLiteOpenHelper {
         //onCreate(db);
     }
 
-    public void createReceipt(InfoUser user, InfoReceipt receipt) {
-
+    public boolean createReceipt(InfoUser user, InfoReceipt receipt) {
+        boolean result = false;
         try {
             // make values to be inserted
             ContentValues values = new ContentValues();
@@ -167,37 +167,47 @@ public class MyDataBase extends SQLiteOpenHelper {
 
             //values.put( RECEIPT_COLUMN_DATE, " time('now') " );
             // insert item
-            db.insert(TABLE_RECEIPTS_NAME, null, values);
+            long res =db.insert(TABLE_RECEIPTS_NAME, null, values);
+            if(res != -1){
+                result = true;
+            }
 
 
         } catch (Throwable t) {
             t.printStackTrace();
         }
 
-
+        return result;
     }
 
     public boolean createReceipt(InfoReceipt receipt) {
 
         try {
+            System.out.println("AAA");
             // make values to be inserted
             ContentValues values = new ContentValues();
             values.put(RECEIPT_COLUMN_TITLE, receipt.getTitle());
             values.put(RECEIPT_COLUMN_DESCRIPTION, receipt.getDescription());
             values.put(RECEIPT_COLUMN_USERID, receipt.getUserId());
 
+            //System.out.println(receipt.getImage());
             //images
-            Bitmap image1 = receipt.getImage();
+            /*Bitmap image1 = receipt.getImage();
             if (image1 != null) {
+                System.out.println("III");
                 byte[] data = getBitmapAsByteArray(image1);
                 if (data != null && data.length > 0) {
+
+                    System.out.println("DDD");
                     values.put(RECEIPT_COLUMN__IMAGE1, data);
                 }
-            }
+            }*/
 
             //values.put( RECEIPT_COLUMN_DATE, " time('now') " );
             // insert item
+            System.out.println("RRR");
             db.insert(TABLE_RECEIPTS_NAME, null, values);
+            System.out.println("RRR222");
             return true;
 
 

@@ -12,21 +12,33 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.myapplication.Interface.LoadListContainer;
+import com.example.myapplication.Interface.LoadListener;
 import com.example.myapplication.MyReceipts.MyReceiptsDataAdapter;
 import com.example.myapplication.R;
 import com.example.myapplication.dataBase.InfoReceipt;
 import com.example.myapplication.dataBase.InfoUser;
 import com.example.myapplication.dataBase.MyInfoManager;
+import com.example.myapplication.utils.NetworkConnector;
+import com.example.myapplication.utils.NetworkResListener;
+import com.example.myapplication.utils.ResStatus;
+
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
 
 
 
-public class MyReceiptsFragment     extends Fragment {
+public class MyReceiptsFragment     extends Fragment implements LoadListener, NetworkResListener {
     private ListView                receiptsList;
     private MyReceiptsDataAdapter   adapter;
     private Context                 context = null;
     private InfoUser                curUser;
     private List<InfoReceipt>       list;
+
+    private List<LoadListContainer> listC ;
+
+
 
 
     @Override
@@ -49,6 +61,15 @@ public class MyReceiptsFragment     extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        NetworkConnector.getInstance().setContext(context);
+        NetworkConnector.getInstance().registerListener(MyReceiptsFragment.this);
+        NetworkConnector.getInstance().sendRequestToServer(NetworkConnector.GET_ALL_RECEIPTS_JSON_REQ, new InfoReceipt());
+
+    }
     /*to display details
    * editable mode
    * param receipt ID*/
@@ -81,5 +102,56 @@ public class MyReceiptsFragment     extends Fragment {
     }
 
 
+    @Override
+    public void onPostLoad(List<LoadListContainer> list) {
+
+
+
+        LoadListContainer.unregisterLoadListener(this);
+
+        List<InfoReceipt> r = new ArrayList<>();
+        for (LoadListContainer l: list){
+            r.add((InfoReceipt)l);
+            System.out.println(((InfoReceipt) l).getTitle());
+        }
+
+
+
+
+        adapter = new MyReceiptsDataAdapter(context, R.layout.my_receipts_layout, r);
+
+        adapter.notifyDataSetChanged();
+
+    }
+
+    @Override
+    public void onPreUpdate() {
+
+    }
+
+
+
+    @Override
+    public void onPostUpdate(byte[] res, ResStatus status) {
+
+        NetworkConnector.getInstance().unregisterListener(this);
+        //to open DB
+
+        String content = null;
+        try{
+            content = new String(res, "UTF-8");
+        }
+        catch (UnsupportedEncodingException e){
+            e.printStackTrace();
+        }
+
+        LoadListContainer.registerLoadListener(this);
+        List<LoadListContainer> listOfReceipts = InfoReceipt.parseJson(content);
+        System.out.println("List of receipts" + listOfReceipts.size());
+        if(listOfReceipts.isEmpty()){
+            LoadListContainer.unregisterLoadListener(this);
+        }
+
+    }
 }
 

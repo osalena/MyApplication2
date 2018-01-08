@@ -4,8 +4,14 @@ package com.example.myapplication;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
@@ -19,15 +25,22 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.myapplication.Category.CategoryFragment;
+import com.example.myapplication.Interface.LoadListContainer;
+import com.example.myapplication.Interface.LoadListener;
 import com.example.myapplication.LogIn.activity_signIn;
 import com.example.myapplication.MyReceipts.CreateReceiptActivity;
 import com.example.myapplication.MyReceipts.MyReceiptsActivity;
+import com.example.myapplication.Notifications.NotificationSubActivity;
 import com.example.myapplication.ReceiptsList.ReceiptsListFragment;
+import com.example.myapplication.dataBase.InfoReceipt;
 import com.example.myapplication.dataBase.InfoUser;
 import com.example.myapplication.dataBase.MyInfoManager;
 import com.example.myapplication.utils.NetworkConnector;
 import com.example.myapplication.utils.NetworkResListener;
 import com.example.myapplication.utils.ResStatus;
+
+import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 
 public class activity_main_cookpad extends AppCompatActivity implements NetworkResListener {
@@ -39,21 +52,33 @@ public class activity_main_cookpad extends AppCompatActivity implements NetworkR
     private InfoUser             curUser;
     private ProgressDialog       progressDialog = null;
 
+    /*
+    Notification
+     */
+    // Notification ID to allow for future updates
+    private static final int MY_NOTIFICATION_ID = 1;
+    // Notification Count
+    private int mNotificationCount;
+    // Notification Action Elements
+    private Intent mNotificationIntent;
+    private PendingIntent mContentIntent;
+
+    private List<LoadListContainer> listC ;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //to open DB
-        MyInfoManager.getInstance().openDataBase(this);
-
-        /*to define neetwork connection and listener */
-        NetworkConnector.getInstance().setContext(this);
-        NetworkConnector.getInstance().registerListener(this);
-        NetworkConnector.getInstance().update();
-
         /* to define layout */
         setContentView(R.layout.activity_my);
+
+        //to open DB
+        MyInfoManager.getInstance().openDataBase(activity_main_cookpad.this);
+
+
+
+
 
         trending        =   (Button)findViewById(R.id.btn2);
         searchView      =   (SearchView)findViewById(R.id.search);
@@ -68,13 +93,17 @@ public class activity_main_cookpad extends AppCompatActivity implements NetworkR
         /* to display Category List */
         getCategories();
         /* to open Fragment2 on create */
-        showFragment1OnClick(trending);
+        //showFragment1OnClick(trending);
 
         searchView.onActionViewExpanded();
         searchView.clearFocus();
 
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        /*Notification intent */
+        mNotificationIntent = new Intent(getApplicationContext(), NotificationSubActivity.class);
+        mContentIntent = PendingIntent.getActivity(getApplicationContext(), 0, mNotificationIntent, Intent.FILL_IN_ACTION);
 
 
 
@@ -86,6 +115,34 @@ public class activity_main_cookpad extends AppCompatActivity implements NetworkR
         //hideKeyboard();
 
 
+        /*to define neetwork connection and listener */
+        NetworkConnector.getInstance().setContext(activity_main_cookpad.this);
+        NetworkConnector.getInstance().registerListener(activity_main_cookpad.this);
+        NetworkConnector.getInstance().update();
+    }
+
+    private void createNotification (){
+        // Define the Notification's expanded message and Intent:
+        // Notification Sound and Vibration on Arrival
+        Uri soundURI = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        long[] mVibratePattern = { 0, 200, 200, 300 };
+
+        // Notification Text Elements
+        String contentTitle = "Notification";
+        String contentText = "You have a new message!";
+
+        Notification.Builder notificationBuilder = new Notification.Builder(getApplicationContext());
+
+        notificationBuilder.setSmallIcon(android.R.drawable.stat_sys_warning);
+        notificationBuilder.setAutoCancel(true);
+        notificationBuilder.setContentTitle(contentTitle);
+        notificationBuilder.setContentText(contentText + " (" + ++mNotificationCount + ")");
+        notificationBuilder.setContentIntent(mContentIntent).setSound(soundURI);
+        notificationBuilder.setVibrate(mVibratePattern);
+
+        // Pass the Notification to the NotificationManager:
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(MY_NOTIFICATION_ID, notificationBuilder.build());
     }
 
 
@@ -134,6 +191,7 @@ public class activity_main_cookpad extends AppCompatActivity implements NetworkR
     }
 
     public void createNewReceiptOnClick (View view) {
+        createNotification();
         Intent intent = new Intent(activity_main_cookpad.this, CreateReceiptActivity.class);
         intent.putExtra("id", "-1");
         intent.putExtra("user", curUser.getId());
@@ -167,7 +225,7 @@ public class activity_main_cookpad extends AppCompatActivity implements NetworkR
     }
 
     public void showFragment2OnClick(View view) {
-        Bundle bundle = new Bundle();
+        /*Bundle bundle = new Bundle();
         bundle.putInt("flag", 1);
         bundle.putInt("user", curUser.getId());
         FragmentManager fm = getFragmentManager();
@@ -176,7 +234,7 @@ public class activity_main_cookpad extends AppCompatActivity implements NetworkR
         FragmentTransaction t= fm.beginTransaction();
         t.replace(R.id.root_layout, fragmet2, "fragment");
         t.addToBackStack(null);
-        t.commit();
+        t.commit();*/
     }
 
     public void showNearbyFragmentOnClick(View view){
@@ -240,6 +298,12 @@ public class activity_main_cookpad extends AppCompatActivity implements NetworkR
         super.onPause();
     }
 
+//    @Override
+//    public void onPostLoad(List<LoadListContainer> list) {
+//
+//        LoadListContainer.unregisterLoadListener(this);
+//    }
+
     @Override
     public void onPreUpdate() {
        progressDialog = new ProgressDialog(this);
@@ -251,22 +315,46 @@ public class activity_main_cookpad extends AppCompatActivity implements NetworkR
 
     @Override
     public void onPostUpdate(byte[] res, ResStatus status) {
-        NetworkConnector.getInstance().unregisterListener(this);
-        //to open DB
-        MyInfoManager.getInstance().openDataBase(this);
+//        NetworkConnector.getInstance().unregisterListener(this);
+//        //to open DB
+//
+//        String content = null;
+//        try{
+//            content = new String(res, "UTF-8");
+//        }
+//        catch (UnsupportedEncodingException e){
+//            e.printStackTrace();
+//        }
+//
+//        LoadListContainer.registerLoadListener(this);
+//        List<LoadListContainer> listOfReceipts = InfoReceipt.parseJson(content);
+//        if(listOfReceipts.isEmpty()){
+//            LoadListContainer.unregisterLoadListener(this);
+//        }
 
-       if(status == ResStatus.SUCCESS){
 
-            MyInfoManager.getInstance().updateResources(res);
-           Toast.makeText(this, "download ok...", Toast.LENGTH_LONG).show();
-        }
-        else{
-            Toast.makeText(this,"download failed...", Toast.LENGTH_LONG).show();
-        }
 
-        showFragment1OnClick(trending);
 
-        Toast.makeText(this, "yes", Toast.LENGTH_LONG).show();
+
+
+
+
+        //MyInfoManager.getInstance().openDataBase(this);
+
+//       if(status == ResStatus.SUCCESS){
+//
+//
+//
+//            MyInfoManager.getInstance().updateResources(res);
+//           Toast.makeText(this, "download ok...", Toast.LENGTH_LONG).show();
+//        }
+//        else{
+//            Toast.makeText(this,"download failed...", Toast.LENGTH_LONG).show();
+//        }
+//
+//        showFragment1OnClick(trending);
+//
+//        Toast.makeText(this, "yes", Toast.LENGTH_LONG).show();
 
         //hideKeyboard();
 

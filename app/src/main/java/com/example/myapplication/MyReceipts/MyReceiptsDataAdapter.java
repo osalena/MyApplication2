@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.myapplication.Interface.LoadListContainer;
 import com.example.myapplication.R;
 import com.example.myapplication.dataBase.InfoReceipt;
 import com.example.myapplication.dataBase.MyInfoManager;
@@ -27,12 +28,16 @@ public class MyReceiptsDataAdapter extends ArrayAdapter {
     protected Context           context;
     private List<InfoReceipt>   receipts;
 
+    private List<LoadListContainer> listC;
+
 
     public MyReceiptsDataAdapter(Context context, int resource, List<InfoReceipt> objects) {
         super(context, resource, objects);
         this.context = context;
         receipts = objects;
     }
+
+
 
     @Override
     public int getCount() {

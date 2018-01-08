@@ -3,6 +3,8 @@ package com.example.myapplication.dataBase;
 
 import android.graphics.Bitmap;
 
+import com.example.myapplication.Interface.LoadListContainer;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -12,7 +14,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InfoReceipt {
+public class InfoReceipt extends LoadListContainer{
     private String id;
     private String title;
     private String description;
@@ -26,6 +28,8 @@ public class InfoReceipt {
 
 
     private String getGeneratedId() {
+        System.out.println(System.currentTimeMillis());
+
         return "i_" + System.currentTimeMillis();
     }
 
@@ -82,7 +86,7 @@ public class InfoReceipt {
             setId(iObj.getString("id"));
             setTitle(iObj.getString("title"));
             setDescription(iObj.getString("description"));
-            setImageExist(iObj.getBoolean("img"));
+            //setImageExist(iObj.getBoolean("img"));
             res = true;
         } catch (Throwable t) {
             t.printStackTrace();
@@ -122,16 +126,16 @@ public class InfoReceipt {
 
 
 
-    public static List<InfoReceipt> parseJson(String content) {
+    public static List<LoadListContainer> parseJson(String content) {
 
-        List<InfoReceipt> receipts = null;
+        List<LoadListContainer> receipts = null;
         try {
 
             JSONTokener jsonTokener = new JSONTokener(content);
 
             JSONObject json = (JSONObject) jsonTokener.nextValue();
 
-            receipts = new ArrayList<InfoReceipt>();
+            receipts = new ArrayList<>();
 
             JSONArray receiptsJsonArr = json.getJSONArray("receipts");
 
@@ -145,11 +149,14 @@ public class InfoReceipt {
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
+
+                LoadListContainer.notifyLsteners(receipts);
             }
 
         } catch (Throwable e) {
             e.printStackTrace();
         }
+
 
         return receipts;
     }

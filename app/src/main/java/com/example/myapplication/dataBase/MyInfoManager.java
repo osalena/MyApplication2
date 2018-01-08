@@ -4,6 +4,7 @@ package com.example.myapplication.dataBase;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.example.myapplication.utils.NetworkConnector;
 import com.example.myapplication.utils.NetworkResListener;
 import com.example.myapplication.utils.ResStatus;
 
@@ -60,13 +61,22 @@ public class MyInfoManager implements NetworkResListener {
         }
     }
 
-    public void createReceipt(InfoUser user, InfoReceipt receipt) {
+    public boolean createReceipt(InfoUser user, InfoReceipt receipt) {
         /*if (db != null) {
             db.createReceipt(getSelectedUser(), receipt);
         } */
+        boolean res = false;
         if (db != null){
-            db.createReceipt(user, receipt);
+            if(db.createReceipt(user, receipt)){
+                //NetworkConnector.getInstance().setContext(context);
+                //NetworkConnector.getInstance().registerListener(context);
+                //NetworkConnector.getInstance().sendRequestToServer(NetworkConnector.INSERT_RECEIPT_REQ, receipt);
+                res = true;
+            }
         }
+
+
+        return res;
     }
 
     public InfoUser readUserByUserName(String userName) {
@@ -109,11 +119,12 @@ public class MyInfoManager implements NetworkResListener {
     }
 
     public List<InfoReceipt> getAllReceipts() {
-        List<InfoReceipt> result = new ArrayList<InfoReceipt>();
+       List<InfoReceipt> result = new ArrayList<InfoReceipt>();
         if (db != null) {
             result = db.getAllReceipts();
         }
         return result;
+
     }
 
     public List<InfoUser> getAllUsers() {
@@ -188,27 +199,30 @@ public class MyInfoManager implements NetworkResListener {
     }
 
 
-    public void updateResources(byte[] res) {
-        if(res==null){
-            return;
-        }
-        try {
-            String content = new String(res, "UTF-8");
-            List<InfoReceipt> list = InfoReceipt.parseJson(content);
-            if(list!=null && list.size()>0) {
-                for(InfoReceipt r: list) {
-                    syncCreateReceipt(r);
-                }
-
-            }
-            } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        catch(Throwable t){
-            t.printStackTrace();
-        }
-
-    }
+//    public void updateResources(byte[] res) {
+//        if(res==null){
+//            Toast.makeText(context,"no data ",Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//        try {
+//            System.out.println("System");
+//            String content = new String(res, "UTF-8");
+//            List<InfoReceipt> list = InfoReceipt.parseJson(content);
+//            if(list!=null && list.size()>0) {
+//                for(InfoReceipt r: list) {
+//                    System.out.println(r.getTitle());
+//                    syncCreateReceipt(r);
+//                }
+//
+//            }
+//            } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
+//        catch(Throwable t){
+//            t.printStackTrace();
+//        }
+//
+//    }
 
 
     private boolean syncUpdateReceipt(InfoReceipt r) {
@@ -229,7 +243,9 @@ public class MyInfoManager implements NetworkResListener {
     private boolean syncCreateReceipt(InfoReceipt r) {
         boolean res = false;
         if (db != null) {
+            System.out.println("DB is not null");
             if(!db.createReceipt(r)){
+                System.out.println("r exists");
                 db.updateReceipt(r);
                 res = true;
             }

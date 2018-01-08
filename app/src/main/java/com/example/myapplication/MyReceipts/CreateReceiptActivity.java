@@ -24,6 +24,9 @@ import com.example.myapplication.R;
 import com.example.myapplication.dataBase.InfoReceipt;
 import com.example.myapplication.dataBase.InfoUser;
 import com.example.myapplication.dataBase.MyInfoManager;
+import com.example.myapplication.utils.NetworkConnector;
+import com.example.myapplication.utils.NetworkResListener;
+import com.example.myapplication.utils.ResStatus;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +35,7 @@ import java.util.Date;
 import java.util.List;
 
 
-public class CreateReceiptActivity extends AppCompatActivity implements View.OnClickListener{
+public class CreateReceiptActivity extends AppCompatActivity implements View.OnClickListener, NetworkResListener{
 
     private ImageView   imageView;
     private Button      loadImageButton;
@@ -143,7 +146,14 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
                         bitmap = drawable.getBitmap();
                     }
                     InfoReceipt receipt = new InfoReceipt(editTextTitle.getText().toString(), editTextDescription.getText().toString(), bitmap);
+                    System.out.println(String.valueOf(curUser.getId()));
+                    receipt.setUserId(String.valueOf(curUser.getId()));
+
                     MyInfoManager.getInstance().createReceipt(curUser, receipt);
+                    NetworkConnector.getInstance().setContext(this);
+                    NetworkConnector.getInstance().registerListener(CreateReceiptActivity.this);
+                    NetworkConnector.getInstance().sendRequestToServer(NetworkConnector.INSERT_RECEIPT_REQ, receipt);
+
                     Toast.makeText(CreateReceiptActivity.this, getResources().getText(R.string.cr_recipe_save), Toast.LENGTH_SHORT).show();
                 }
                 /* existing receipt to edit */
@@ -350,5 +360,15 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
             e.printStackTrace();
         }*/
         return scaled;
+    }
+
+    @Override
+    public void onPreUpdate() {
+
+    }
+
+    @Override
+    public void onPostUpdate(byte[] res, ResStatus status) {
+NetworkConnector.getInstance().unregisterListener(this);
     }
 }
