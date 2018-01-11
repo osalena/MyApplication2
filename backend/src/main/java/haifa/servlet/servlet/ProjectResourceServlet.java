@@ -1,5 +1,7 @@
 package haifa.servlet.servlet;
 
+
+
 import haifa.servlet.database.CategoryResProvider;
 import haifa.servlet.database.ConnPool;
 
@@ -54,6 +56,7 @@ public class ProjectResourceServlet extends HttpServlet {
 	private static final String RECEIPT_DESCRIPTION = "rec_desc";
 	private static final String RECEIPT_USER_ID = "rec_uid";
 	private static final String FILE_NAME ="name";
+	private static final String RECEIPT_IMAGE="rec_img";
 
 	private static final String REQ = "req";
 
@@ -170,20 +173,22 @@ public class ProjectResourceServlet extends HttpServlet {
 
 						String descrpition = req.getParameter(RECEIPT_DESCRIPTION);
 
+						byte[] img = req.getParameter(RECEIPT_IMAGE).getBytes();
+
 						String userId = req.getParameter(RECEIPT_USER_ID);
 
 						ServletInputStream isServ = req.getInputStream();
 
 						DataInputStream is = new DataInputStream(isServ);
 
-						ByteArrayOutputStream bin = new ByteArrayOutputStream(
+						/*ByteArrayOutputStream bin = new ByteArrayOutputStream(
 								2048);
 						int data;
 						while ((data = is.read()) != -1) {
 							bin.write((byte) data);
-						}
+						}*/
 
-						byte[] imageBlob = bin.toByteArray();
+						//byte[] imageBlob = bin.toByteArray();
 
 						respPage = RESOURCE_FAIL_TAG;
 						resp.addHeader("Content-Type",
@@ -191,7 +196,7 @@ public class ProjectResourceServlet extends HttpServlet {
 						conn = ConnPool.getInstance().getConnection();
 						ReceiptResProvider receiptResProvider = new ReceiptResProvider();
 
-						Receipt receipt = new Receipt(id, title, descrpition, imageBlob,
+						Receipt receipt = new Receipt(id, title, descrpition, img,
 								userId);
 						if (receiptResProvider.insertReceipt(receipt, conn)) {
 							respPage = RESOURCE_SUCCESS_TAG;

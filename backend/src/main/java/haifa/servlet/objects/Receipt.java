@@ -3,7 +3,10 @@ package haifa.servlet.objects;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
+
+import javax.xml.bind.DatatypeConverter;
 
 public class Receipt {
 
@@ -113,7 +116,7 @@ public class Receipt {
 		iObj.put("id", getId());
 		iObj.put("title", getTitle());
 		iObj.put("description", getDescription());
-		//iObj.put("img", isImageExists());
+		//iObj.put("img", new String(getImage1()));
 		iObj.put("userId", getUserId());
 
 		return iObj;
@@ -121,11 +124,14 @@ public class Receipt {
 
 	}
 
-	private boolean isImageExists() {
+	private int isImageExists() {
+		int i;
 		if (image1 == null || image1.length == 0) {
-			return false;
+			i=0;
+			return i;
 		}
-		return true;
+		i=1;
+		return i;
 	}
 
 	public static String toJson(List<Receipt> list) {

@@ -3,6 +3,7 @@ package com.example.myapplication.MyReceipts;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +16,13 @@ import com.example.myapplication.Interface.LoadListContainer;
 import com.example.myapplication.R;
 import com.example.myapplication.dataBase.InfoReceipt;
 import com.example.myapplication.dataBase.MyInfoManager;
+import com.example.myapplication.utils.NetworkConnector;
+import com.example.myapplication.utils.NetworkResListener;
+import com.example.myapplication.utils.ResStatus;
 
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /* DataAdapter for My Receipts list
@@ -23,7 +30,7 @@ import java.util.List;
 *   MyReceiptActivity context
 *   list of receipts
 * */
-public class MyReceiptsDataAdapter extends ArrayAdapter {
+public class MyReceiptsDataAdapter extends ArrayAdapter{
 
     protected Context           context;
     private List<InfoReceipt>   receipts;
@@ -93,7 +100,14 @@ public class MyReceiptsDataAdapter extends ArrayAdapter {
 
                 builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        MyInfoManager.getInstance().deleteReceipt(currentReceipt);
+                      //  MyInfoManager.getInstance().deleteReceipt(currentReceipt);
+
+//                        try {
+//                            //NetworkConnector.getInstance().sendRequestToServer(NetworkConnector.DELETE_RECEIPT_REQ, currentReceipt, context);
+//                        } catch (UnsupportedEncodingException e) {
+//                            e.printStackTrace();
+//                        }
+
                         MyReceiptsDataAdapter.this.remove(currentReceipt);
                         MyReceiptsDataAdapter.this.notifyDataSetChanged();
                     }
@@ -120,6 +134,8 @@ public class MyReceiptsDataAdapter extends ArrayAdapter {
     public InfoReceipt getItem(int position) {
         return receipts.get(position);
     }
+
+
 
 
     /*

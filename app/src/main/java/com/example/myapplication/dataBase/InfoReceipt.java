@@ -2,16 +2,20 @@ package com.example.myapplication.dataBase;
 
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import com.example.myapplication.Interface.LoadListContainer;
+import com.example.myapplication.utils.NetworkConnector;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class InfoReceipt extends LoadListContainer{
@@ -86,7 +90,9 @@ public class InfoReceipt extends LoadListContainer{
             setId(iObj.getString("id"));
             setTitle(iObj.getString("title"));
             setDescription(iObj.getString("description"));
-            //setImageExist(iObj.getBoolean("img"));
+           // setImageBytes(iObj.getString("img"));
+           // byte[] b = iObj.getString("img").getBytes("UTF-8");
+           // System.out.print("the new bytes "+b);
             res = true;
         } catch (Throwable t) {
             t.printStackTrace();
@@ -94,7 +100,14 @@ public class InfoReceipt extends LoadListContainer{
         return res;
 
     }
-
+    public void setImageBytes(String img) throws UnsupportedEncodingException {
+        if (img.length()!=0) {
+           //System.out.println("bytes are those " +img.getBytes());
+            System.out.println("image name " +getTitle());
+            Bitmap b = BitmapFactory.decodeByteArray(img.getBytes("UTF-8"), 0, img.getBytes().length);
+            setImage(b);
+        }
+    }
     public void setImage(Bitmap image) {
         this.image = image;
     }
@@ -109,8 +122,11 @@ public class InfoReceipt extends LoadListContainer{
         return imageExist;
     }
 
-    public void setImageExist(boolean imageExist) {
-        this.imageExist = imageExist;
+    public void setImageExist(int imageExist) {
+        if (imageExist==0)
+            this.imageExist = false;
+        else
+            this.imageExist=true;
     }
 
     public String getUserId() {

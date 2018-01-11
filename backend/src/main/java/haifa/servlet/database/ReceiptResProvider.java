@@ -56,7 +56,7 @@ public class ReceiptResProvider {
 					image = imageBlob.getBytes(1, (int) imageBlob.length());
 				}
 
-	System.out.println("NULL PIC");
+//	System.out.println("NULL PIC");
 
 				String userId = rs.getString(5);
 				Receipt item = new Receipt(id, title, description, image, userId);
@@ -172,9 +172,9 @@ public class ReceiptResProvider {
 
 			String userId = obj.getUserId();
 
-			if (imageBytes == null) {
+			/*if (imageBytes == null) {
 				imageBytes = getImage(id, conn);
-			}
+			}*/
 
 
 

@@ -28,8 +28,11 @@ import com.example.myapplication.utils.NetworkConnector;
 import com.example.myapplication.utils.NetworkResListener;
 import com.example.myapplication.utils.ResStatus;
 
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -62,7 +65,7 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_receipt);
-        MyInfoManager.getInstance().openDataBase(this);
+       MyInfoManager.getInstance().openDataBase(this);
         /* to display BACK button */
         android.app.ActionBar actionBar = getActionBar();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -80,7 +83,7 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
         id = b.getString("id");
         edit_flag = b.getInt("edit_flag");
          /* get current user info */
-        curUser= MyInfoManager.getInstance().readUser(String.valueOf(b.getInt("user")));
+       curUser= MyInfoManager.getInstance().readUser(String.valueOf(b.getInt("user")));
 
 
         /* existing receipt to edit*/
@@ -141,18 +144,25 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
                 /* new receipt to add */
                 if (id.equals("-1") && edit_flag == 0) {
                     /* photo is empty*/
+
                     if(bitmap == null){
+
                         BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
                         bitmap = drawable.getBitmap();
                     }
+
                     InfoReceipt receipt = new InfoReceipt(editTextTitle.getText().toString(), editTextDescription.getText().toString(), bitmap);
-                    System.out.println(String.valueOf(curUser.getId()));
+                    //System.out.println(String.valueOf(curUser.getId()));
                     receipt.setUserId(String.valueOf(curUser.getId()));
 
-                    MyInfoManager.getInstance().createReceipt(curUser, receipt);
+                   // MyInfoManager.getInstance().createReceipt(curUser, receipt);
                     NetworkConnector.getInstance().setContext(this);
                     NetworkConnector.getInstance().registerListener(CreateReceiptActivity.this);
-                    NetworkConnector.getInstance().sendRequestToServer(NetworkConnector.INSERT_RECEIPT_REQ, receipt);
+                    try {
+                        NetworkConnector.getInstance().sendRequestToServer(NetworkConnector.INSERT_RECEIPT_REQ, receipt);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
 
                     Toast.makeText(CreateReceiptActivity.this, getResources().getText(R.string.cr_recipe_save), Toast.LENGTH_SHORT).show();
                 }
@@ -162,7 +172,7 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
                     Bitmap bitmap2 = drawable.getBitmap();
                     InfoReceipt updatedReceipt =  new InfoReceipt(editTextTitle.getText().toString(), editTextDescription.getText().toString(), bitmap2);
                     updatedReceipt.setId(id);
-                    MyInfoManager.getInstance().updateReceipt(updatedReceipt);
+                    //MyInfoManager.getInstance().updateReceipt(updatedReceipt);
                     Toast.makeText(CreateReceiptActivity.this, getResources().getText(R.string.cr_recipe_edit), Toast.LENGTH_SHORT).show();
                 }
                 return true;
@@ -233,7 +243,7 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
                     Uri imageUri = data.getData();
                     try {
                         bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),imageUri);
-                        bitmap = getScaledImageFromFilePath(bitmap);
+                        //bitmap = getScaledImageFromFilePath(bitmap);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -310,14 +320,14 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
 
     @Override
     protected void onResume() {
-        MyInfoManager.getInstance().openDataBase(this);
+       // MyInfoManager.getInstance().openDataBase(this);
         super.onResume();
 
     }
 
     @Override
     protected void onPause() {
-        MyInfoManager.getInstance().closeDataBase();
+      //  MyInfoManager.getInstance().closeDataBase();
         super.onPause();
     }
 
@@ -371,4 +381,6 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
     public void onPostUpdate(byte[] res, ResStatus status) {
 NetworkConnector.getInstance().unregisterListener(this);
     }
+
+
 }

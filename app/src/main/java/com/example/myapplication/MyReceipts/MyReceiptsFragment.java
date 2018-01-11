@@ -4,6 +4,7 @@ package com.example.myapplication.MyReceipts;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,8 @@ import com.example.myapplication.dataBase.MyInfoManager;
 import com.example.myapplication.utils.NetworkConnector;
 import com.example.myapplication.utils.NetworkResListener;
 import com.example.myapplication.utils.ResStatus;
+
+import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -65,9 +68,13 @@ public class MyReceiptsFragment     extends Fragment implements LoadListener, Ne
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        NetworkConnector.getInstance().setContext(context);
+        NetworkConnector.getInstance().setContext(getActivity());
         NetworkConnector.getInstance().registerListener(MyReceiptsFragment.this);
-        NetworkConnector.getInstance().sendRequestToServer(NetworkConnector.GET_ALL_RECEIPTS_JSON_REQ, new InfoReceipt());
+        try {
+            NetworkConnector.getInstance().sendRequestToServer(NetworkConnector.GET_ALL_RECEIPTS_JSON_REQ, new InfoReceipt());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
     }
     /*to display details
@@ -107,12 +114,12 @@ public class MyReceiptsFragment     extends Fragment implements LoadListener, Ne
 
 
 
-        LoadListContainer.unregisterLoadListener(this);
+        //LoadListContainer.unregisterLoadListener(this);
 
         List<InfoReceipt> r = new ArrayList<>();
         for (LoadListContainer l: list){
             r.add((InfoReceipt)l);
-            System.out.println(((InfoReceipt) l).getTitle());
+     //       System.out.println(((InfoReceipt) l).getTitle());
         }
 
 
@@ -120,13 +127,14 @@ public class MyReceiptsFragment     extends Fragment implements LoadListener, Ne
 
         adapter = new MyReceiptsDataAdapter(context, R.layout.my_receipts_layout, r);
 
-        adapter.notifyDataSetChanged();
+        receiptsList.setAdapter(adapter);
+        //receiptsList.setOnItemClickListener(receiptClickListener);
 
     }
 
     @Override
     public void onPreUpdate() {
-
+        Toast.makeText(this.context,"getting data from server",Toast.LENGTH_SHORT).show();
     }
 
 
@@ -144,14 +152,15 @@ public class MyReceiptsFragment     extends Fragment implements LoadListener, Ne
         catch (UnsupportedEncodingException e){
             e.printStackTrace();
         }
-
         LoadListContainer.registerLoadListener(this);
         List<LoadListContainer> listOfReceipts = InfoReceipt.parseJson(content);
-        System.out.println("List of receipts" + listOfReceipts.size());
+        //System.out.println("List of receipts" + listOfReceipts.size());
         if(listOfReceipts.isEmpty()){
             LoadListContainer.unregisterLoadListener(this);
         }
 
     }
+
+
 }
 

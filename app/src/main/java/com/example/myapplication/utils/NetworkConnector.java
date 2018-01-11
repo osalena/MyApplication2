@@ -5,15 +5,20 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.util.Base64;
 
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.myapplication.dataBase.InfoCategory;
 import com.example.myapplication.dataBase.InfoReceipt;
+
+import org.json.JSONException;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -23,8 +28,10 @@ import java.util.List;
 
 public class NetworkConnector {
 
+    //private final String HOST_URL = "http://10.0.2.2:8080/";
+    //private  final String BASE_URL = HOST_URL + "projres";
 
-    private  final String BASE_URL = "http://172.20.10.2:8080/projres";
+    private  final String BASE_URL = "http://192.168.1.17:8080/projres";
     private List<NetworkResListener> listeners = Collections.synchronizedList(new ArrayList<NetworkResListener>());
     private Context ctx;
     private static NetworkConnector instance;
@@ -48,13 +55,17 @@ public class NetworkConnector {
     public static final String RECEIPT_TITLE = "rec_title";
     public static final String RECEIPT_DESCRIPTION = "rec_desc";
     public static final String RECEIPT_USER_ID = "rec_uid";
-
+    public static final String RECEIPT_IMAGE = "rec_img";
     public static final String REQ = "req";
 
    private final int RETRY_TIMES = 2;
 
 
-    public void sendRequestToServer(String requestCode, InfoReceipt data){
+
+
+
+
+    public void sendRequestToServer(String requestCode, InfoReceipt data) throws UnsupportedEncodingException {
 
         if(data==null){
             return;
@@ -72,6 +83,9 @@ public class NetworkConnector {
                 builder.appendQueryParameter(RECEIPT_ID , String.valueOf(0));
                 builder.appendQueryParameter(RECEIPT_TITLE , data.getTitle());
                 builder.appendQueryParameter(RECEIPT_DESCRIPTION , data.getDescription());
+
+                String s = new String(InfoReceipt.getBitmapAsByteArray(data.getImage()),"UTF-8");
+                builder.appendQueryParameter(RECEIPT_IMAGE,s);
                 builder.appendQueryParameter(RECEIPT_USER_ID , String.valueOf(data.getUserId()));
                 break;
             }

@@ -2,11 +2,14 @@ package com.example.myapplication.dataBase;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.widget.Toast;
 
 import com.example.myapplication.utils.NetworkConnector;
 import com.example.myapplication.utils.NetworkResListener;
 import com.example.myapplication.utils.ResStatus;
+
+import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -197,6 +200,7 @@ public class MyInfoManager implements NetworkResListener {
     public void onPostUpdate(byte[] res, ResStatus status) {
         Toast.makeText(context,"Sync finished...status " + status.toString(),Toast.LENGTH_SHORT).show();
     }
+
 
 
 //    public void updateResources(byte[] res) {

@@ -10,6 +10,7 @@ import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -39,11 +40,13 @@ import com.example.myapplication.utils.NetworkConnector;
 import com.example.myapplication.utils.NetworkResListener;
 import com.example.myapplication.utils.ResStatus;
 
+import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 
-public class activity_main_cookpad extends AppCompatActivity implements NetworkResListener {
+public class activity_main_cookpad extends AppCompatActivity implements LoadListener, NetworkResListener {
 
     private Button               trending;
     private SearchView           searchView;
@@ -76,7 +79,7 @@ public class activity_main_cookpad extends AppCompatActivity implements NetworkR
         //to open DB
         MyInfoManager.getInstance().openDataBase(activity_main_cookpad.this);
 
-
+        progressDialog = new ProgressDialog(this);
 
 
 
@@ -199,10 +202,11 @@ public class activity_main_cookpad extends AppCompatActivity implements NetworkR
     }
 
 
-    public void showFragment1OnClick(View view) {
+    public void showFragment1OnClick(String cont) {
         Bundle bundle = new Bundle();
         bundle.putInt("flag", 2);
         bundle.putInt("user", curUser.getId());
+        bundle.putString("list", cont);
         FragmentManager fm = getFragmentManager();
         ReceiptsListFragment fragmet2= new ReceiptsListFragment();
         fragmet2.setArguments(bundle);
@@ -287,13 +291,16 @@ public class activity_main_cookpad extends AppCompatActivity implements NetworkR
         t.replace(R.id.root_layout, fragmet2, "fragment");
         t.addToBackStack(null);
         t.commit();*/
-        showFragment2OnClick(trending);
+        NetworkConnector.getInstance().setContext(activity_main_cookpad.this);
+        NetworkConnector.getInstance().registerListener(activity_main_cookpad.this);
+        NetworkConnector.getInstance().update();
         super.onResume();
 
     }
 
     @Override
     protected void onPause() {
+
         MyInfoManager.getInstance().closeDataBase();
         super.onPause();
     }
@@ -305,61 +312,59 @@ public class activity_main_cookpad extends AppCompatActivity implements NetworkR
 //    }
 
     @Override
+    public void onPostLoad(List<LoadListContainer> list) {
+
+    }
+
+    @Override
     public void onPreUpdate() {
-       progressDialog = new ProgressDialog(this);
+
         progressDialog.setTitle("Updating resources");
         progressDialog.setMessage("Please wait...");
-        progressDialog.setCancelable(false);
+        progressDialog.setCancelable(true);
         progressDialog.show();
     }
 
     @Override
     public void onPostUpdate(byte[] res, ResStatus status) {
-//        NetworkConnector.getInstance().unregisterListener(this);
-//        //to open DB
-//
-//        String content = null;
-//        try{
-//            content = new String(res, "UTF-8");
-//        }
-//        catch (UnsupportedEncodingException e){
-//            e.printStackTrace();
-//        }
-//
-//        LoadListContainer.registerLoadListener(this);
-//        List<LoadListContainer> listOfReceipts = InfoReceipt.parseJson(content);
-//        if(listOfReceipts.isEmpty()){
-//            LoadListContainer.unregisterLoadListener(this);
-//        }
-
-
-
-
-
-
-
-
-        //MyInfoManager.getInstance().openDataBase(this);
-
-//       if(status == ResStatus.SUCCESS){
-//
-//
-//
-//            MyInfoManager.getInstance().updateResources(res);
-//           Toast.makeText(this, "download ok...", Toast.LENGTH_LONG).show();
-//        }
-//        else{
-//            Toast.makeText(this,"download failed...", Toast.LENGTH_LONG).show();
-//        }
-//
-//        showFragment1OnClick(trending);
-//
-//        Toast.makeText(this, "yes", Toast.LENGTH_LONG).show();
-
-        //hideKeyboard();
-
-
+        NetworkConnector.getInstance().unregisterListener(this);
+        //to open DB
         progressDialog.dismiss();
+        String content = null;
+        try{
+            content = new String(res, "UTF-8");
+            System.out.println(content);
+        }
+        catch (UnsupportedEncodingException e){
+            e.printStackTrace();
+        }
+
+        LoadListContainer.registerLoadListener(this);
+        List<LoadListContainer> listOfReceipts = InfoReceipt.parseJson(content);
+        if(listOfReceipts.isEmpty()){
+            LoadListContainer.unregisterLoadListener(this);
+        }
+       if(status == ResStatus.SUCCESS){
+
+
+
+          //  MyInfoManager.getInstance().updateResources(res);
+           Toast.makeText(this, "download ok...", Toast.LENGTH_LONG).show();
+        }
+        else{
+            Toast.makeText(this,"download failed...", Toast.LENGTH_LONG).show();
+        }
+
+        showFragment1OnClick(content);
+
+        Toast.makeText(this, "yes", Toast.LENGTH_LONG).show();
+
+       // hideKeyboard();
+
+
+
 
     }
+
+
 }
