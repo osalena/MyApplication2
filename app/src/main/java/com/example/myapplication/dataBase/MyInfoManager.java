@@ -71,10 +71,13 @@ public class MyInfoManager implements NetworkResListener {
         boolean res = false;
         if (db != null){
             if(db.createReceipt(user, receipt)){
-                //NetworkConnector.getInstance().setContext(context);
-                //NetworkConnector.getInstance().registerListener(context);
-                //NetworkConnector.getInstance().sendRequestToServer(NetworkConnector.INSERT_RECEIPT_REQ, receipt);
                 res = true;
+                if(receipt.getImage()==null) {
+                    NetworkConnector.getInstance().sendRequestToServer(NetworkConnector.INSERT_RECEIPT_REQ, receipt, instance);
+                }
+                else{
+                    NetworkConnector.getInstance().sendRequestToServer(NetworkConnector.INSERT_RECEIPT_WITH_IMG_REQ, receipt, instance);
+                }
             }
         }
 
@@ -141,6 +144,16 @@ public class MyInfoManager implements NetworkResListener {
     public void updateReceipt(InfoReceipt receipt) {
         if (db != null && receipt != null) {
             db.updateReceipt(receipt);
+            InfoReceipt folder = getSelectedReceipt();
+            if(folder!=null) {
+                receipt.setId(folder.getId());
+                if(receipt.getImage()==null) {
+                    NetworkConnector.getInstance().sendRequestToServer(NetworkConnector.INSERT_RECEIPT_REQ, receipt, instance);
+                }
+                else{
+                    NetworkConnector.getInstance().sendRequestToServer(NetworkConnector.INSERT_RECEIPT_WITH_IMG_REQ, receipt, instance);
+                }
+            }
         }
     }
 
@@ -201,6 +214,15 @@ public class MyInfoManager implements NetworkResListener {
         Toast.makeText(context,"Sync finished...status " + status.toString(),Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onPostUpdate(JSONObject res, ResStatus status) {
+        
+    }
+
+    @Override
+    public void onPostUpdate(Bitmap res, ResStatus status) {
+
+    }
 
 
 //    public void updateResources(byte[] res) {

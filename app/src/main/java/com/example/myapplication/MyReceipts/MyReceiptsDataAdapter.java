@@ -30,7 +30,7 @@ import java.util.List;
 *   MyReceiptActivity context
 *   list of receipts
 * */
-public class MyReceiptsDataAdapter extends ArrayAdapter{
+public class MyReceiptsDataAdapter extends ArrayAdapter implements NetworkResListener{
 
     protected Context           context;
     private List<InfoReceipt>   receipts;
@@ -100,13 +100,9 @@ public class MyReceiptsDataAdapter extends ArrayAdapter{
 
                 builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                      //  MyInfoManager.getInstance().deleteReceipt(currentReceipt);
+                        MyInfoManager.getInstance().deleteReceipt(currentReceipt);
 
-//                        try {
-//                            //NetworkConnector.getInstance().sendRequestToServer(NetworkConnector.DELETE_RECEIPT_REQ, currentReceipt, context);
-//                        } catch (UnsupportedEncodingException e) {
-//                            e.printStackTrace();
-//                        }
+                        NetworkConnector.getInstance().sendRequestToServer(NetworkConnector.DELETE_RECEIPT_REQ, currentReceipt,MyReceiptsDataAdapter.this);
 
                         MyReceiptsDataAdapter.this.remove(currentReceipt);
                         MyReceiptsDataAdapter.this.notifyDataSetChanged();
@@ -133,6 +129,26 @@ public class MyReceiptsDataAdapter extends ArrayAdapter{
     @Override
     public InfoReceipt getItem(int position) {
         return receipts.get(position);
+    }
+
+    @Override
+    public void onPreUpdate() {
+
+    }
+
+    @Override
+    public void onPostUpdate(byte[] res, ResStatus status) {
+
+    }
+
+    @Override
+    public void onPostUpdate(JSONObject res, ResStatus status) {
+
+    }
+
+    @Override
+    public void onPostUpdate(Bitmap res, ResStatus status) {
+
     }
 
 

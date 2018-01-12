@@ -116,7 +116,8 @@ public class Receipt {
 		iObj.put("id", getId());
 		iObj.put("title", getTitle());
 		iObj.put("description", getDescription());
-		//iObj.put("img", new String(getImage1()));
+		if (image1!=null)
+			iObj.put("img", new String(getImage1()));
 		iObj.put("userId", getUserId());
 
 		return iObj;

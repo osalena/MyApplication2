@@ -54,6 +54,7 @@ public class MyReceiptsFragment     extends Fragment implements LoadListener, Ne
         /* get user ID from parent Activity */
         Bundle bundle           = this.getArguments();
         curUser                 = MyInfoManager.getInstance().readUser(String.valueOf(bundle.getInt("user")));
+
         receiptsList            = (ListView) rootView.findViewById(R.id.receipt_recycle);
         list                    = MyInfoManager.getInstance().getUserReceipt(curUser);
         //List<InfoReceipt> list  = MyInfoManager.getInstance().getAllReceipts();
@@ -67,14 +68,7 @@ public class MyReceiptsFragment     extends Fragment implements LoadListener, Ne
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        NetworkConnector.getInstance().setContext(getActivity());
-        NetworkConnector.getInstance().registerListener(MyReceiptsFragment.this);
-        try {
-            NetworkConnector.getInstance().sendRequestToServer(NetworkConnector.GET_ALL_RECEIPTS_JSON_REQ, new InfoReceipt());
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        NetworkConnector.getInstance().update(this);
 
     }
     /*to display details
@@ -119,7 +113,6 @@ public class MyReceiptsFragment     extends Fragment implements LoadListener, Ne
         List<InfoReceipt> r = new ArrayList<>();
         for (LoadListContainer l: list){
             r.add((InfoReceipt)l);
-     //       System.out.println(((InfoReceipt) l).getTitle());
         }
 
 
@@ -142,7 +135,6 @@ public class MyReceiptsFragment     extends Fragment implements LoadListener, Ne
     @Override
     public void onPostUpdate(byte[] res, ResStatus status) {
 
-        NetworkConnector.getInstance().unregisterListener(this);
         //to open DB
 
         String content = null;
@@ -154,10 +146,19 @@ public class MyReceiptsFragment     extends Fragment implements LoadListener, Ne
         }
         LoadListContainer.registerLoadListener(this);
         List<LoadListContainer> listOfReceipts = InfoReceipt.parseJson(content);
-        //System.out.println("List of receipts" + listOfReceipts.size());
         if(listOfReceipts.isEmpty()){
             LoadListContainer.unregisterLoadListener(this);
         }
+
+    }
+
+    @Override
+    public void onPostUpdate(JSONObject res, ResStatus status) {
+
+    }
+
+    @Override
+    public void onPostUpdate(Bitmap res, ResStatus status) {
 
     }
 

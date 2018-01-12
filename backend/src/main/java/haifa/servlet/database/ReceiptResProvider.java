@@ -23,7 +23,7 @@ public class ReceiptResProvider {
 
 	private static final String select_img_sql = "SELECT image FROM  inforeceipt WHERE IdReceipt=?;";
 
-	private static final String insert_sql = "INSERT INTO inforeceipt (IdReceipt, Title, Description, Image, UserID) VALUES (?, ?, ?, ?, ?);";
+	private static final String insert_sql = "INSERT INTO inforeceipt (Title, Description, Image, UserID) VALUES (?, ?, ?, ?);";
 
 	private static final String delete_sql = "DELETE FROM inforeceipt WHERE IdReceipt=?;";
 
@@ -50,12 +50,12 @@ public class ReceiptResProvider {
 				String title = rs.getString(2);
 				String description = rs.getString(3);
 
-				java.sql.Blob imageBlob = rs.getBlob(4);
-				byte[] image = null;
-				if (imageBlob != null) {
-					image = imageBlob.getBytes(1, (int) imageBlob.length());
-				}
-
+				byte[] image = rs.getBytes(4);
+				//byte[] image = null;
+//				if (imageBlob != null) {
+//					image = imageBlob.getBytes(1, (int) imageBlob.length());
+//				}
+				System.out.println(new String(image).getBytes("UTF-8"));
 //	System.out.println("NULL PIC");
 
 				String userId = rs.getString(5);
@@ -153,132 +153,173 @@ public class ReceiptResProvider {
 
 		return result;
 	}
-
-	public boolean insertReceipt(Receipt obj, Connection conn) {
-
-		boolean result = false;
+	public List<Receipt> getReceipt(int id, Connection conn) throws SQLException {
 		ResultSet rs = null;
-		ResultSet rs1 = null;
 		PreparedStatement ps = null;
-		PreparedStatement stt = null;
-
+		List<Receipt> result = new ArrayList<Receipt>();
 		try {
+            ps = conn.prepareStatement(select_sql);
 
-			String id = obj.getId();
-			String title = obj.getTitle();
-			String description = obj.getDescription();
+            ps.setInt(1, id);
 
-			byte[] imageBytes = obj.getImage1();
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                String idd = rs.getString(1);
+                String title = rs.getString(2);
+                String description = rs.getString(3);
+                String userid = rs.getString(5);
+                Receipt r = new Receipt(idd, title, description, null, userid);
+                result.add(r);
+            }
+        } catch (SQLException e) {
+            throw e;
 
-			String userId = obj.getUserId();
+        } catch (Throwable e) {
+            e.printStackTrace();
 
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+		return result;
+	}
+	public boolean insertReceipt(Receipt obj, Connection conn) {
+        boolean flag = true;
+        boolean result = false;
+        ResultSet rs = null;
+        ResultSet rs1 = null;
+        PreparedStatement ps = null;
+        PreparedStatement stt = null;
+
+        try {
+
+            String id = obj.getId();
+            String title = obj.getTitle();
+            String description = obj.getDescription();
+
+            byte[] imageBytes = obj.getImage1();
+
+            String userId = obj.getUserId();
+            System.out.println("ID IS " + title);
 			/*if (imageBytes == null) {
 				imageBytes = getImage(id, conn);
 			}*/
 
+            int i = 0;
+            try {
+                i = Integer.valueOf(id);
+            } catch (NumberFormatException e) {
+                flag = false;
+            }
+            if (flag) {
+                stt = (PreparedStatement) conn.prepareStatement(select_sql);
+                stt.setInt(1, i);
+                if (stt.execute()) {
+                    rs1 = stt.getResultSet();
+                    if (rs1.next()) {
+                        // its execute update
+                        ps = (PreparedStatement) conn.prepareStatement(update_sql);
+
+                        ps.setString(1, title);
+                        ps.setString(2, description);
+
+                        if (imageBytes != null) {
+                            InputStream is = new ByteArrayInputStream(imageBytes);
+                            ps.setBlob(3, is);
+
+                        } else {
+
+                            ps.setNull(3, Types.BLOB);
+                        }
 
 
-			stt = (PreparedStatement) conn.prepareStatement(select_sql);
-			stt.setInt(1, Integer.valueOf(id));
+                        ps.setInt(4, Integer.valueOf(userId));
 
-			if (stt.execute()) {
-				rs1 = stt.getResultSet();
-				if (rs1.next()) {
-					// its execute update
-					ps = (PreparedStatement) conn.prepareStatement(update_sql);
+                        // where
+                        ps.setString(5, id);
 
-					ps.setString(1, title);
-					ps.setString(2, description);
+                        ps.execute();
 
-					if (imageBytes != null) {
-						InputStream is = new ByteArrayInputStream(imageBytes);
-						ps.setBlob(3, is);
+                        result = true;
 
-					} else {
+                    }
+                }
+            } else {
 
-						ps.setNull(3, Types.BLOB);
-					}
+                // its execute insert
+                ps = (PreparedStatement) conn.prepareStatement(insert_sql);
+                ps.setString(1, title);
+                ps.setString(2, description);
 
+                if (imageBytes != null) {
+                    InputStream is = new ByteArrayInputStream(imageBytes);
+                    ps.setBlob(3, is);
 
+                } else {
 
-					ps.setInt(4, Integer.valueOf(userId));
+                    ps.setNull(3, Types.BLOB);
+                }
+                ps.setString(4, userId);
+                ps.execute();
 
-					// where
-					ps.setString(5, id);
+                result = true;
 
-					ps.execute();
+            }
+        } catch (SQLException e1) {
+            e1.printStackTrace();
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
 
-					result = true;
+            }
+            if (rs1 != null) {
+                try {
+                    rs1.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
 
-				} else {
+            }
 
-					// its execute insert
-					ps = (PreparedStatement) conn.prepareStatement(insert_sql);
-					ps.setString(1, id);
-					ps.setString(2, title);
-					ps.setString(3, description);
+            if (stt != null) {
+                try {
+                    stt.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
 
-					if (imageBytes != null) {
-						InputStream is = new ByteArrayInputStream(imageBytes);
-						ps.setBlob(4, is);
+            }
 
-					} else {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
-						ps.setNull(4, Types.BLOB);
-					}
-
-
-
-					ps.setString(5, userId);
-
-					ps.execute();
-
-					result = true;
-
-				}
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-
-			}
-			if (rs1 != null) {
-				try {
-					rs1.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-
-			}
-
-			if (stt != null) {
-				try {
-					stt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-
-			}
-
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
-		return result;
-
-	}
+        return result;
+    }
 
 
 

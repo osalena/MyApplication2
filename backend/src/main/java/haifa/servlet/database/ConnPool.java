@@ -22,7 +22,7 @@ public class ConnPool {
 	//String jdbcUrl = "jdbc:mysql://localhost:3306/mynotesdb?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8";
 	String jdbcUrl = "jdbc:mysql://localhost:3306/myapp?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8";
 	private String user = "root"; 
-	private String password = "1234";
+	private String password = "traubas28";
 	
 	
 	public ConnPool() {

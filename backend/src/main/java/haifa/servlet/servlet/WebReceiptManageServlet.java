@@ -28,11 +28,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class WebFoldersManageServlet
+ * Servlet implementation class WebReceiptManageServlet
  */
 
 
-public class WebFoldersManageServlet extends HttpServlet {
+public class WebReceiptManageServlet extends HttpServlet {
 
 	
 	private static final long serialVersionUID = 1L;
@@ -44,10 +44,10 @@ public class WebFoldersManageServlet extends HttpServlet {
 	private static final String RESOURCE_FAIL_TAG = "{\"result_code\":0}";
 	private static final String RESOURCE_SUCCESS_TAG = "{\"result_code\":1}";
 	
-	private static final String RECEIPT_ID = "r_id";
-	private static final String RECEIPT_TITLE = "r_title";
-	private static final String RECEIPT_DESCRIPTION = "r_desc";
-	private static final String RECEIPT_USER_ID = "r_uid";
+	private static final String RECEIPT_ID = "rec_id";
+	private static final String RECEIPT_TITLE = "rec_title";
+	private static final String RECEIPT_DESCRIPTION = "rec_desc";
+	private static final String RECEIPT_USER_ID = "rec_uid";
 	private static final String IS_DELETE = "delete";
 
 
@@ -146,7 +146,9 @@ public class WebFoldersManageServlet extends HttpServlet {
 
 				}
 			}
-
+            ReceiptResProvider receiptsResProvider = new ReceiptResProvider();
+            Receipt receipt = new Receipt(receiptId, receiptTitle, receiptDesc, image, receiptUserId);
+            System.out.println("WHAT IS THIS "+receipt.getId());
 			while (retry > 0) {
 
 				try {
@@ -154,8 +156,7 @@ public class WebFoldersManageServlet extends HttpServlet {
 
 					conn = ConnPool.getInstance().getConnection();
 
-					ReceiptResProvider receiptsResProvider = new ReceiptResProvider();
-					Receipt receipt = new Receipt(receiptId, receiptTitle, receiptDesc, image, receiptUserId);
+
 
 					if(isDelete){
 
@@ -167,6 +168,7 @@ public class WebFoldersManageServlet extends HttpServlet {
 					}
 					else{
 						if(receiptsResProvider.insertReceipt(receipt, conn)){
+							System.out.println("HMM"+receipt.getId());
 							respPage = RESOURCE_SUCCESS_TAG;
 						}
 
@@ -174,7 +176,7 @@ public class WebFoldersManageServlet extends HttpServlet {
 
 					if(image!=null && image.length>0){
 
-						FilesUtils.writeLocalCopy(fileName, image, false);
+						//FilesUtils.writeLocalCopy(fileName, image, false);
 					}
 
 					retry = 0;

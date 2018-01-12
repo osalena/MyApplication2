@@ -32,9 +32,8 @@ public class InfoReceipt extends LoadListContainer{
 
 
     private String getGeneratedId() {
-        System.out.println(System.currentTimeMillis());
 
-        return "i_" + System.currentTimeMillis();
+        return "i_"+System.currentTimeMillis();
     }
 
     public InfoReceipt(String id, String title, String description) {
@@ -90,7 +89,8 @@ public class InfoReceipt extends LoadListContainer{
             setId(iObj.getString("id"));
             setTitle(iObj.getString("title"));
             setDescription(iObj.getString("description"));
-           // setImageBytes(iObj.getString("img"));
+            //if (iObj.getString("img") != null)
+            //    setImageBytes(iObj.getString("img"));
            // byte[] b = iObj.getString("img").getBytes("UTF-8");
            // System.out.print("the new bytes "+b);
             res = true;
@@ -103,7 +103,7 @@ public class InfoReceipt extends LoadListContainer{
     public void setImageBytes(String img) throws UnsupportedEncodingException {
         if (img.length()!=0) {
            //System.out.println("bytes are those " +img.getBytes());
-            System.out.println("image name " +getTitle());
+            System.out.println("image name " +getTitle()+" "+img.getBytes());
             Bitmap b = BitmapFactory.decodeByteArray(img.getBytes("UTF-8"), 0, img.getBytes().length);
             setImage(b);
         }

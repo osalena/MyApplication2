@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.ServletConfig;
@@ -42,7 +43,7 @@ public class ProjectResourceServlet extends HttpServlet {
 	private static final int INSERT_RECEIPT_REQ = 3;
 	private static final int DELETE_RECEIPT_REQ = 4;
 	private static final int GET_RECEIPT_IMAGE_REQ = 5;
-	//private static final int GET_RECEIPTS_OF_USER_JSON_REQ = 6;
+	private static final int GET_RECEIPT = 8;
 	private static final int GET_FILE_FROM_FILESYSTEM_REQ = 7;
 
 	private static final String USER_ID = "u_id";
@@ -124,7 +125,36 @@ public class ProjectResourceServlet extends HttpServlet {
 						retry = 0;
 						break;
 					}
+						case GET_RECEIPT: {
+							System.out.println("==>");
+							String id = req.getParameter(RECEIPT_ID);
+							conn = ConnPool.getInstance().getConnection();
+							ReceiptResProvider receiptResProvider = new ReceiptResProvider();
+							List<Receipt> rece = receiptResProvider
+									.getReceipt(Integer.valueOf(id),conn);
+							for (Receipt r : rece) {
+								System.out.println(r.getTitle());
+							}
+							String resultJson = Receipt.toJson(rece);
 
+							if(resultJson == null ){
+								System.out.println(rece.toString());
+							}
+
+							if (resultJson != null && !resultJson.isEmpty()) {
+								System.out.println(rece.toString());
+								respPage = resultJson;
+								resp.addHeader("Content-Type",
+										"application/json; charset=UTF-8");
+								PrintWriter pw = resp.getWriter();
+								pw.write(respPage);
+							} else {
+								resp.sendError(404);
+							}
+
+							retry = 0;
+							break;
+						}
 					/*case INSERT_FOLDER_REQ: {
 						String id = req.getParameter(FOLDER_ID);
 						String title = req.getParameter(FOLDER_TITLE);
@@ -173,22 +203,20 @@ public class ProjectResourceServlet extends HttpServlet {
 
 						String descrpition = req.getParameter(RECEIPT_DESCRIPTION);
 
-						byte[] img = req.getParameter(RECEIPT_IMAGE).getBytes();
-
 						String userId = req.getParameter(RECEIPT_USER_ID);
 
 						ServletInputStream isServ = req.getInputStream();
 
 						DataInputStream is = new DataInputStream(isServ);
 
-						/*ByteArrayOutputStream bin = new ByteArrayOutputStream(
+						ByteArrayOutputStream bin = new ByteArrayOutputStream(
 								2048);
 						int data;
 						while ((data = is.read()) != -1) {
 							bin.write((byte) data);
-						}*/
+						}
 
-						//byte[] imageBlob = bin.toByteArray();
+						byte[] imageBlob = bin.toByteArray();
 
 						respPage = RESOURCE_FAIL_TAG;
 						resp.addHeader("Content-Type",
@@ -196,7 +224,7 @@ public class ProjectResourceServlet extends HttpServlet {
 						conn = ConnPool.getInstance().getConnection();
 						ReceiptResProvider receiptResProvider = new ReceiptResProvider();
 
-						Receipt receipt = new Receipt(id, title, descrpition, img,
+						Receipt receipt = new Receipt(id, title, descrpition, imageBlob,
 								userId);
 						if (receiptResProvider.insertReceipt(receipt, conn)) {
 							respPage = RESOURCE_SUCCESS_TAG;

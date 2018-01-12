@@ -2,16 +2,28 @@ package com.example.myapplication.utils;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Base64;
+import android.util.LruCache;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.myapplication.dataBase.InfoCategory;
 import com.example.myapplication.dataBase.InfoReceipt;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
@@ -23,15 +35,23 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class NetworkConnector {
 
-    //private final String HOST_URL = "http://10.0.2.2:8080/";
-    //private  final String BASE_URL = HOST_URL + "projres";
+    private static NetworkConnector mInstance;
+    private RequestQueue mRequestQueue;
+    private ImageLoader mImageLoader;
+    private static Context mCtx;
 
-    private  final String BASE_URL = "http://192.168.1.17:8080/projres";
+
+    private final String HOST_URL = "http://192.168.1.14:8080/";
+    private  final String BASE_URL = HOST_URL + "projres";
+
+    //private  final String BASE_URL = "http://192.168.1.14:8080/projres";
     private List<NetworkResListener> listeners = Collections.synchronizedList(new ArrayList<NetworkResListener>());
     private Context ctx;
     private static NetworkConnector instance;
@@ -42,8 +62,8 @@ public class NetworkConnector {
     public static final String INSERT_RECEIPT_REQ = "3";
     public static final String DELETE_RECEIPT_REQ = "4";
     public static final String GET_RECEIPT_IMAGE_REQ = "5";
-    //private static final int GET_RECEIPTS_OF_USER_JSON_REQ = 6;
-    private static final String GET_FILE_FROM_FILESYSTEM_REQ = "7";
+    public static final String GET_RECEIPT_REQ = "8";
+    public static final String INSERT_RECEIPT_WITH_IMG_REQ = "6";
 
     private static final String USER_ID = "u_id";
     private static final String USER_NAME = "u_name";
@@ -58,80 +78,256 @@ public class NetworkConnector {
     public static final String RECEIPT_IMAGE = "rec_img";
     public static final String REQ = "req";
 
-   private final int RETRY_TIMES = 2;
+    private final int RETRY_TIMES = 2;
+    private NetworkConnector() {
+
+    }
+
+    public static synchronized NetworkConnector getInstance() {
+        if (mInstance == null) {
+            mInstance = new NetworkConnector();
+        }
+        return mInstance;
+    }
+
+    public void initialize(Context context){
+        mCtx = context;
+        mRequestQueue = getRequestQueue();
+
+        mImageLoader = new ImageLoader(mRequestQueue,
+                new ImageLoader.ImageCache() {
+                    private final LruCache<String, Bitmap>
+                            cache = new LruCache<String, Bitmap>(20);
+
+                    @Override
+                    public Bitmap getBitmap(String url) {
+                        return cache.get(url);
+                    }
+
+                    @Override
+                    public void putBitmap(String url, Bitmap bitmap) {
+                        cache.put(url, bitmap);
+                    }
+                });
+    }
+
+    private RequestQueue getRequestQueue() {
+        if (mRequestQueue == null) {
+            // getApplicationContext() is key, it keeps you from leaking the
+            // Activity or BroadcastReceiver if someone passes one in.
+            mRequestQueue = Volley.newRequestQueue(mCtx.getApplicationContext());
+        }
+        return mRequestQueue;
+    }
+
+    private void addToRequestQueue(String query, final NetworkResListener listener) {
+
+        String reqUrl = BASE_URL + "?" + query;
+        notifyPreUpdateListeners(listener);
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.POST, reqUrl, null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        notifyPostUpdateListeners(response, ResStatus.SUCCESS, listener);
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+
+                        JSONObject err = null;
+                        try {
+                            err = new JSONObject(RESOURCE_FAIL_TAG);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        finally {
+                            notifyPostUpdateListeners(err, ResStatus.FAIL, listener);
+                        }
+
+                    }
+                });
+
+        getRequestQueue().add(jsObjRequest);
+    }
+
+    private void addImageRequestToQueue(String query, final NetworkResListener listener){
+
+        String reqUrl = BASE_URL + "?" + query;
+
+        notifyPreUpdateListeners(listener);
+
+        getImageLoader().get(reqUrl, new ImageLoader.ImageListener() {
+            @Override
+            public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
+                Bitmap bm = response.getBitmap();
+                notifyPostBitmapUpdateListeners(bm, ResStatus.SUCCESS, listener);
+            }
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                notifyPostBitmapUpdateListeners(null, ResStatus.FAIL, listener);
+            }
+        });
+    }
+
+    private ImageLoader getImageLoader() {
+        return mImageLoader;
+    }
 
 
+    private void uploadItemImage(final InfoReceipt item, final NetworkResListener listener) {
+
+        String reqUrl = HOST_URL + "images?";
+        notifyPreUpdateListeners(listener);
 
 
+        //our custom volley request
+        VolleyMultipartRequest volleyMultipartRequest = new VolleyMultipartRequest(Request.Method.POST, reqUrl,
+                new Response.Listener<NetworkResponse>() {
+                    @Override
+                    public void onResponse(NetworkResponse response) {
+                        try {
+                            JSONObject obj = new JSONObject(new String(response.data));
+                            Toast.makeText(mCtx, obj.getString("message"), Toast.LENGTH_SHORT).show();
+                            notifyPostUpdateListeners(obj, ResStatus.SUCCESS, listener);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(mCtx, error.getMessage(), Toast.LENGTH_SHORT).show();
+                        JSONObject obj = null;
+                        try {
+                            obj = new JSONObject(RESOURCE_FAIL_TAG );
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        finally {
+                            notifyPostUpdateListeners(obj, ResStatus.FAIL, listener);
+                        }
+
+                    }
+                }) {
+
+            /*
+            * If you want to add more parameters with the image
+            * you can do it here
+            * here we have only one parameter with the image
+            * which is tags
+            * */
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put(RECEIPT_ID, item.getId());
+                params.put(RECEIPT_TITLE, item.getTitle());
+                params.put(RECEIPT_DESCRIPTION,  item.getDescription());
+                params.put(RECEIPT_USER_ID, item.getUserId());
+                return params;
+            }
+
+            /*
+            * Here we are passing image by renaming it with a unique name
+            * */
+            @Override
+            protected Map<String, DataPart> getByteData() {
+                Map<String, DataPart> params = new HashMap<>();
+                long imagename = System.currentTimeMillis();
+                byte[] pic = InfoReceipt.getBitmapAsByteArray(item.getImage());
+                params.put("fileField", new DataPart(imagename + ".png", pic));
+                return params;
+            }
+        };
+
+        //adding the request to volley
+        getRequestQueue().add(volleyMultipartRequest);
+    }
 
 
-    public void sendRequestToServer(String requestCode, InfoReceipt data) throws UnsupportedEncodingException {
-
+    public void sendRequestToServer(String requestCode, InfoReceipt data, NetworkResListener listener){
         if(data==null){
             return;
         }
 
-        NetworkTask networkTask = new NetworkTask();
-
-
         Uri.Builder builder = new Uri.Builder();
 
         switch (requestCode){
+            case INSERT_RECEIPT_WITH_IMG_REQ:{
+
+                uploadItemImage(data, listener);
+
+                break;
+            }
+            case GET_RECEIPT_REQ:{
+
+                builder.appendQueryParameter(REQ , requestCode);
+                builder.appendQueryParameter(RECEIPT_ID , data.getId());
+                String query = builder.build().getEncodedQuery();
+
+                addToRequestQueue(query, listener);
+            }
             case INSERT_RECEIPT_REQ:{
                 builder.appendQueryParameter(REQ , requestCode);
-                //builder.appendQueryParameter(RECEIPT_ID , String.valueOf(data.getId()));
-                builder.appendQueryParameter(RECEIPT_ID , String.valueOf(0));
+                builder.appendQueryParameter(RECEIPT_ID , data.getId());
                 builder.appendQueryParameter(RECEIPT_TITLE , data.getTitle());
                 builder.appendQueryParameter(RECEIPT_DESCRIPTION , data.getDescription());
 
-                String s = new String(InfoReceipt.getBitmapAsByteArray(data.getImage()),"UTF-8");
-                builder.appendQueryParameter(RECEIPT_IMAGE,s);
-                builder.appendQueryParameter(RECEIPT_USER_ID , String.valueOf(data.getUserId()));
+                String query = builder.build().getEncodedQuery();
+                addToRequestQueue(query, listener);
+
                 break;
             }
             case DELETE_RECEIPT_REQ:{
                 builder.appendQueryParameter(REQ , requestCode);
-                builder.appendQueryParameter(RECEIPT_ID , String.valueOf(data.getId()));
+                builder.appendQueryParameter(RECEIPT_ID , data.getId());
+
+                String query = builder.build().getEncodedQuery();
+                addToRequestQueue(query, listener);
+
                 break;
             }
             case GET_RECEIPT_IMAGE_REQ: {
                 builder.appendQueryParameter(REQ , requestCode);
-                builder.appendQueryParameter(RECEIPT_ID , String.valueOf(data.getId()));
+                builder.appendQueryParameter(RECEIPT_ID , data.getId());
+
+                String query = builder.build().getEncodedQuery();
+                addImageRequestToQueue(query, listener);
 
                 break;
             }
-            case GET_ALL_RECEIPTS_JSON_REQ:{
-
-                builder.appendQueryParameter(REQ , GET_ALL_RECEIPTS_JSON_REQ);
-                String query = builder.build().getEncodedQuery();
-
+            case GET_ALL_RECEIPTS_JSON_REQ: {
 
             }
         }
 
-        String query = builder.build().getEncodedQuery();
 
-        networkTask.execute(query);
 
     }
 
 
-    public void update(){
-        NetworkTask networkTask = new NetworkTask();
+    public void update(NetworkResListener listener){
 
         Uri.Builder builder = new Uri.Builder();
         builder.appendQueryParameter(REQ , GET_ALL_RECEIPTS_JSON_REQ);
         String query = builder.build().getEncodedQuery();
 
-        networkTask.execute(query);
+        addToRequestQueue(query, listener);
     }
 
-    /*public void sendRequestToServer(String requestCode, InfoCategory data) {
+    /*public void sendRequestToServer(String requestCode, InfoFolder data, NetworkResListener listener) {
+
+
         if(data==null){
             return;
         }
-
-        NetworkTask networkTask = new NetworkTask();
 
         Uri.Builder builder = new Uri.Builder();
 
@@ -149,74 +345,26 @@ public class NetworkConnector {
             }
         }
         String query = builder.build().getEncodedQuery();
-        networkTask.execute(query);
+
+        addToRequestQueue(query, listener);
 
     }*/
 
-
-    private NetworkConnector()
-    {
-        super();
-    }
-
-    public static NetworkConnector getInstance(){
-        if(instance==null){
-            instance = new NetworkConnector();
-
-        }
-        return instance;
-    }
-
-    public void setContext(Context ctx){
-        this.ctx = ctx;
-    }
-
-
-
-
-
-    public static void releaseInstance() {
-        if (instance != null) {
-            instance.clean();
-            instance = null;
-        }
-    }
-
     private void clean() {
-        listeners.clear();
-    }
 
-    public boolean unregisterListener(NetworkResListener listener){
-        boolean result = false;
-        if(listener!=null){
-            if(listeners.contains(listener)){
-                result= listeners.remove(listener);
-            }
-        }
-        return result;
-    }
-
-    public void registerListener(NetworkResListener listener) {
-        if(listener!=null){
-            if(!listeners.contains(listener)){
-                listeners.add(listener);
-            }
-        }
     }
 
 
-    private  void notifyPostUpdateListeners(final byte[] res, final ResStatus status) {
+    private  void notifyPostBitmapUpdateListeners(final Bitmap res, final ResStatus status, final NetworkResListener listener) {
 
-        Handler handler = new Handler(ctx.getMainLooper());
+        Handler handler = new Handler(mCtx.getMainLooper());
 
         Runnable myRunnable = new Runnable() {
 
             @Override
             public void run() {
                 try{
-                    for (NetworkResListener listener : listeners) {
-                        listener.onPostUpdate(res, status);
-                    }
+                    listener.onPostUpdate(res, status);
                 }
                 catch(Throwable t){
                     t.printStackTrace();
@@ -227,19 +375,16 @@ public class NetworkConnector {
 
     }
 
-    private  void notifyPreUpdateListeners() {
+    private  void notifyPostUpdateListeners(final JSONObject res, final ResStatus status, final NetworkResListener listener) {
 
-
-        Handler handler = new Handler(ctx.getMainLooper());
+        Handler handler = new Handler(mCtx.getMainLooper());
 
         Runnable myRunnable = new Runnable() {
 
             @Override
             public void run() {
                 try{
-                    for (NetworkResListener listener : listeners) {
-                        listener.onPreUpdate();
-                    }
+                    listener.onPostUpdate(res.toString().getBytes(), status);
                 }
                 catch(Throwable t){
                     t.printStackTrace();
@@ -250,110 +395,25 @@ public class NetworkConnector {
 
     }
 
-
-    private byte[] getResFromServer(String query, int retry){
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        InputStream in = null;
-
-        try {
-
-            URL url = new URL(BASE_URL);
+    private  void notifyPreUpdateListeners(final NetworkResListener listener) {
 
 
-            int timeoutConnection = 10000;
+        Handler handler = new Handler(mCtx.getMainLooper());
 
-            int timeoutSocket = 10000;
+        Runnable myRunnable = new Runnable() {
 
-
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setConnectTimeout(timeoutConnection);
-            conn.setReadTimeout(timeoutSocket);
-
-            conn.setRequestMethod("POST");
-            conn.setDoInput(true);
-            conn.setDoOutput(true);
-
-
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(), "UTF-8"));
-            writer.write(query);
-            writer.flush();
-            writer.close();
-
-            in = new BufferedInputStream(conn.getInputStream());
-
-            if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-
-                byte[] buffer = new byte[4096];
-                int n = -1;
-
-                while ((n = in.read(buffer)) != -1) {
-                    if (n > 0) {
-                        out.write(buffer, 0, n);
-                    }
+            @Override
+            public void run() {
+                try{
+                    listener.onPreUpdate();
+                }
+                catch(Throwable t){
+                    t.printStackTrace();
                 }
             }
-            else{
-                retry=0;
-                return new byte[0];
-            }
-
-
-        } catch (Throwable e) {
-            e.printStackTrace();
-            if(retry==0){
-                return new byte[0];
-            }
-            return getResFromServer(query, retry - 1);
-        } finally {
-            try {
-                if (in != null) in.close();
-                if (out != null) out.close();
-            } catch (Throwable e) {}
-        }
-        return   out.toByteArray();
+        };
+        handler.post(myRunnable);
 
     }
-
-
-    private class NetworkTask extends AsyncTask<String, Void, byte[]> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            notifyPreUpdateListeners();
-
-        }
-
-        @Override
-        protected byte[] doInBackground(String... params) {
-
-            byte[] res= getResFromServer(params[0],RETRY_TIMES);
-            return res;
-
-        }
-
-        @Override
-        protected void onPostExecute(byte[] res) {
-
-            super.onPostExecute(res);
-
-            if(res!=null && res.length>0){
-                String resp = new String(res);
-                if(!resp.equals(RESOURCE_FAIL_TAG)) {
-                    notifyPostUpdateListeners(res, ResStatus.SUCCESS);
-                }
-            }
-
-            else{
-                notifyPostUpdateListeners(res, ResStatus.FAIL);
-            }
-
-        }
-
-    }
-
-
-
 }
 

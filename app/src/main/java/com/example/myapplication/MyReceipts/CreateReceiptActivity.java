@@ -1,6 +1,7 @@
 package com.example.myapplication.MyReceipts;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,6 +21,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.myapplication.Interface.LoadListContainer;
+import com.example.myapplication.Interface.LoadListener;
 import com.example.myapplication.R;
 import com.example.myapplication.dataBase.InfoReceipt;
 import com.example.myapplication.dataBase.InfoUser;
@@ -34,11 +37,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 
-public class CreateReceiptActivity extends AppCompatActivity implements View.OnClickListener, NetworkResListener{
+public class CreateReceiptActivity extends AppCompatActivity implements View.OnClickListener, NetworkResListener, LoadListener {
 
     private ImageView   imageView;
     private Button      loadImageButton;
@@ -53,8 +57,7 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
     private String      id;
     /*1 for non-editable*/
     private int         edit_flag = 0;
-
-
+    private int userid;
     //private ActionBar actionBar;
     public  static final int GET_FROM_GALLERY = 1;
     private static final int REQUEST_TAKE_PHOTO = 111;
@@ -63,6 +66,8 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        NetworkConnector.getInstance().initialize(this);
+        final Context cont = this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_receipt);
        MyInfoManager.getInstance().openDataBase(this);
@@ -81,18 +86,20 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
 
         Bundle b = getIntent().getExtras();
         id = b.getString("id");
+
         edit_flag = b.getInt("edit_flag");
          /* get current user info */
        curUser= MyInfoManager.getInstance().readUser(String.valueOf(b.getInt("user")));
-
-
+        userid = b.getInt("user");
         /* existing receipt to edit*/
         try {
-            //if(Integer.getInteger(id) > -1){
-            InfoReceipt rec = MyInfoManager.getInstance().readReceipt(id);
-            imageView.setImageBitmap(rec.getImage());
-            editTextTitle.setText(rec.getTitle());
-            editTextDescription.setText(rec.getDescription());
+            if(Integer.valueOf(id) > -1) {
+
+                final InfoReceipt rec = new InfoReceipt();
+                rec.setId(id);
+                NetworkConnector.getInstance().sendRequestToServer(NetworkConnector.GET_RECEIPT_REQ,rec,this);
+                NetworkConnector.getInstance().sendRequestToServer(NetworkConnector.GET_RECEIPT_IMAGE_REQ, rec, this);
+            }
         }
         catch(NullPointerException e) {
             /* to display Receipt details without editing */
@@ -152,17 +159,11 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
                     }
 
                     InfoReceipt receipt = new InfoReceipt(editTextTitle.getText().toString(), editTextDescription.getText().toString(), bitmap);
-                    //System.out.println(String.valueOf(curUser.getId()));
-                    receipt.setUserId(String.valueOf(curUser.getId()));
 
-                   // MyInfoManager.getInstance().createReceipt(curUser, receipt);
-                    NetworkConnector.getInstance().setContext(this);
-                    NetworkConnector.getInstance().registerListener(CreateReceiptActivity.this);
-                    try {
-                        NetworkConnector.getInstance().sendRequestToServer(NetworkConnector.INSERT_RECEIPT_REQ, receipt);
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
+                    receipt.setUserId(""+userid);
+
+                   MyInfoManager.getInstance().createReceipt(curUser, receipt);
+                   //NetworkConnector.getInstance().sendRequestToServer(NetworkConnector.INSERT_RECEIPT_REQ, receipt,this);
 
                     Toast.makeText(CreateReceiptActivity.this, getResources().getText(R.string.cr_recipe_save), Toast.LENGTH_SHORT).show();
                 }
@@ -331,6 +332,10 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
         super.onPause();
     }
 
+    private void setImage(Bitmap bm) {
+        imageView.setImageBitmap(bm);
+    }
+
     private Bitmap getScaledImageFromFilePath(String imagePath) {
         // Get the dimensions of the View
         Bitmap scaledBitmap = null;
@@ -373,13 +378,53 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
     }
 
     @Override
+    public void onPostLoad(List<LoadListContainer> list) {
+
+    }
+
+    @Override
     public void onPreUpdate() {
 
     }
 
     @Override
     public void onPostUpdate(byte[] res, ResStatus status) {
-NetworkConnector.getInstance().unregisterListener(this);
+        String content = null;
+        try{
+            content = new String(res, "UTF-8");
+            System.out.println(content);
+        }
+        catch (UnsupportedEncodingException e){
+            e.printStackTrace();
+        }
+
+        LoadListContainer.registerLoadListener(this);
+        List<LoadListContainer> listOfReceipts = InfoReceipt.parseJson(content);
+        List<InfoReceipt> r=new ArrayList<>();
+        for (LoadListContainer l : listOfReceipts) {
+            r.add((InfoReceipt)l);
+            System.out.println("NEW RECEIPT: "+((InfoReceipt)l).getTitle());
+        }
+        System.out.println(content);
+        editTextTitle.setText(r.get(0).getTitle());
+        editTextDescription.setText(r.get(0).getDescription());
+    }
+
+    @Override
+    public void onPostUpdate(JSONObject res, ResStatus status) {
+
+    }
+
+    @Override
+    public void onPostUpdate(Bitmap res, ResStatus status) {
+        Toast.makeText(CreateReceiptActivity.this,"Sync download img finished...status " + status.toString(),Toast.LENGTH_SHORT).show();
+        if(status == ResStatus.SUCCESS){
+            if(res!=null) {
+
+                setImage(res);
+                //MyInfoManager.getInstance().updateReceipt(rec);
+            }
+        }
     }
 
 

@@ -31,7 +31,6 @@ import com.example.myapplication.Interface.LoadListener;
 import com.example.myapplication.LogIn.activity_signIn;
 import com.example.myapplication.MyReceipts.CreateReceiptActivity;
 import com.example.myapplication.MyReceipts.MyReceiptsActivity;
-import com.example.myapplication.Notifications.NotificationSubActivity;
 import com.example.myapplication.ReceiptsList.ReceiptsListFragment;
 import com.example.myapplication.dataBase.InfoReceipt;
 import com.example.myapplication.dataBase.InfoUser;
@@ -87,8 +86,6 @@ public class activity_main_cookpad extends AppCompatActivity implements LoadList
         searchView      =   (SearchView)findViewById(R.id.search);
         actionButton    =   (FloatingActionButton)findViewById(R.id.myFAB);
 
-
-
         /* get current user info */
         Bundle b = getIntent().getExtras();
         curUser= MyInfoManager.getInstance().readUser(String.valueOf(b.getInt("user")));
@@ -105,7 +102,7 @@ public class activity_main_cookpad extends AppCompatActivity implements LoadList
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         /*Notification intent */
-        mNotificationIntent = new Intent(getApplicationContext(), NotificationSubActivity.class);
+        mNotificationIntent = new Intent(getApplicationContext(), MyNotificationsActivity.class);
         mContentIntent = PendingIntent.getActivity(getApplicationContext(), 0, mNotificationIntent, Intent.FILL_IN_ACTION);
 
 
@@ -119,9 +116,8 @@ public class activity_main_cookpad extends AppCompatActivity implements LoadList
 
 
         /*to define neetwork connection and listener */
-        NetworkConnector.getInstance().setContext(activity_main_cookpad.this);
-        NetworkConnector.getInstance().registerListener(activity_main_cookpad.this);
-        NetworkConnector.getInstance().update();
+        NetworkConnector.getInstance().initialize(this);
+        NetworkConnector.getInstance().update(this);
     }
 
     private void createNotification (){
@@ -291,9 +287,7 @@ public class activity_main_cookpad extends AppCompatActivity implements LoadList
         t.replace(R.id.root_layout, fragmet2, "fragment");
         t.addToBackStack(null);
         t.commit();*/
-        NetworkConnector.getInstance().setContext(activity_main_cookpad.this);
-        NetworkConnector.getInstance().registerListener(activity_main_cookpad.this);
-        NetworkConnector.getInstance().update();
+        NetworkConnector.getInstance().update(this);
         super.onResume();
 
     }
@@ -327,7 +321,6 @@ public class activity_main_cookpad extends AppCompatActivity implements LoadList
 
     @Override
     public void onPostUpdate(byte[] res, ResStatus status) {
-        NetworkConnector.getInstance().unregisterListener(this);
         //to open DB
         progressDialog.dismiss();
         String content = null;
@@ -344,12 +337,12 @@ public class activity_main_cookpad extends AppCompatActivity implements LoadList
         if(listOfReceipts.isEmpty()){
             LoadListContainer.unregisterLoadListener(this);
         }
-       if(status == ResStatus.SUCCESS){
+        if(status == ResStatus.SUCCESS){
 
 
 
-          //  MyInfoManager.getInstance().updateResources(res);
-           Toast.makeText(this, "download ok...", Toast.LENGTH_LONG).show();
+            //  MyInfoManager.getInstance().updateResources(res);
+            Toast.makeText(this, "download ok...", Toast.LENGTH_LONG).show();
         }
         else{
             Toast.makeText(this,"download failed...", Toast.LENGTH_LONG).show();
@@ -357,12 +350,22 @@ public class activity_main_cookpad extends AppCompatActivity implements LoadList
 
         showFragment1OnClick(content);
 
-        Toast.makeText(this, "yes", Toast.LENGTH_LONG).show();
 
-       // hideKeyboard();
-
+        // hideKeyboard();
 
 
+
+
+    }
+
+    @Override
+    public void onPostUpdate(JSONObject res, ResStatus status) {
+
+    }
+
+    @Override
+    public void onPostUpdate(Bitmap res, ResStatus status) {
+        //to open DB
 
     }
 

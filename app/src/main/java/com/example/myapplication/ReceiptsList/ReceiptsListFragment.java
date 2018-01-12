@@ -26,19 +26,23 @@ import com.example.myapplication.utils.NetworkConnector;
 import com.example.myapplication.utils.NetworkResListener;
 import com.example.myapplication.utils.ResStatus;
 
+import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 
 
-public class ReceiptsListFragment extends Fragment{
+public class ReceiptsListFragment extends Fragment implements NetworkResListener{
 
     private ListView            receiptsList;
     private ReceiptsDataAdapter adapter;
     private Context             context = null;
     private List<InfoReceipt>   list;
     private InfoUser            curUser;
-
+    List<InfoReceipt> queue;
+    List<InfoReceipt> r;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -48,7 +52,7 @@ public class ReceiptsListFragment extends Fragment{
         receiptsList     = (ListView)rootView.findViewById(R.id.folderList);
         curUser          = MyInfoManager.getInstance().readUser(String.valueOf(bundle.getInt("user")));
 
-
+        r = new ArrayList<>();
         if(bundle != null) {
             if (bundle.getInt("flag") == 1) {
                 list = MyInfoManager.getInstance().getAllReceipts();
@@ -57,14 +61,20 @@ public class ReceiptsListFragment extends Fragment{
                 list = MyInfoManager.getInstance().getUserReceipt(curUser);
             }
             List<LoadListContainer> listOfReceipts = InfoReceipt.parseJson(bundle.getString("list"));
-            List<InfoReceipt> r = new ArrayList<>();
+
             for (LoadListContainer l: listOfReceipts){
                 r.add((InfoReceipt)l);
+            }
+            queue = new ArrayList<>();
+            for (InfoReceipt ir : r) {
+                queue.add(ir);
+                NetworkConnector.getInstance().sendRequestToServer(NetworkConnector.GET_RECEIPT_IMAGE_REQ,ir,this);
             }
             adapter = new ReceiptsDataAdapter(context, R.layout.recycler_item, r);
 
             receiptsList.setAdapter(adapter);
         }
+
 
 
         //adapter = new ReceiptsDataAdapter(context, R.layout.recycler_item, list);
@@ -99,4 +109,34 @@ public class ReceiptsListFragment extends Fragment{
         }
     };
 
+    @Override
+    public void onPreUpdate() {
+
+    }
+
+    @Override
+    public void onPostUpdate(byte[] res, ResStatus status) {
+
+    }
+
+    @Override
+    public void onPostUpdate(JSONObject res, ResStatus status) {
+
+    }
+
+    @Override
+    public void onPostUpdate(Bitmap res, ResStatus status) {
+            InfoReceipt ir = queue.get(0);
+        if (!queue.isEmpty())
+            queue.remove(0);
+        if(status == ResStatus.SUCCESS){
+            if(res!=null) {
+                for (InfoReceipt i : r) {
+                    if (i.getId().equals(ir.getId()))
+                        i.setImage(res);
+                }
+                //MyInfoManager.getInstance().updateReceipt(rec);
+            }
+        }
+    }
 }
