@@ -61,8 +61,8 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
     //private ActionBar actionBar;
     public  static final int GET_FROM_GALLERY = 1;
     private static final int REQUEST_TAKE_PHOTO = 111;
-    private static final int PHOTO_W = 400;
-    private static final int PHOTO_H = 200;
+    private static final int PHOTO_W = 100;
+    private static final int PHOTO_H = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,11 +152,11 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
                 if (id.equals("-1") && edit_flag == 0) {
                     /* photo is empty*/
 
-                    if(bitmap == null){
-
-                        BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
-                        bitmap = drawable.getBitmap();
-                    }
+//                    if(bitmap == null){
+//
+//                        BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
+//                        bitmap = drawable.getBitmap();
+//                    }
 
                     InfoReceipt receipt = new InfoReceipt(editTextTitle.getText().toString(), editTextDescription.getText().toString(), bitmap);
 
@@ -355,10 +355,12 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
     }
 
     private Bitmap getScaledImageFromFilePath(Bitmap bitmap) {
-
+        Bitmap scaledBitmap = null;
         //Bitmap d = new BitmapDrawable(ctx.getResources() , w.photo.getAbsolutePath()).getBitmap();
-        int nh = (int) ( bitmap.getHeight() * (512.0 / bitmap.getWidth()) );
-        Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 512, nh, true);
+        Matrix matrix = new Matrix();
+        matrix.postRotate(0);
+
+        scaledBitmap =  Bitmap.createScaledBitmap(bitmap, 10, 10, false);
 
         // Get the dimensions of the View
         /*Bitmap scaledBitmap = null;
@@ -374,7 +376,7 @@ public class CreateReceiptActivity extends AppCompatActivity implements View.OnC
         } catch (Throwable e) {
             e.printStackTrace();
         }*/
-        return scaled;
+        return scaledBitmap;
     }
 
     @Override

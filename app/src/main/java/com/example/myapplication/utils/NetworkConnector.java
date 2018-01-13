@@ -171,7 +171,7 @@ public class NetworkConnector {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
-                notifyPostBitmapUpdateListeners(null, ResStatus.FAIL, listener);
+                notifyPostBitmapUpdateListeners(null, ResStatus.SUCCESS, listener);
             }
         });
     }
@@ -279,7 +279,7 @@ public class NetworkConnector {
                 builder.appendQueryParameter(RECEIPT_ID , data.getId());
                 builder.appendQueryParameter(RECEIPT_TITLE , data.getTitle());
                 builder.appendQueryParameter(RECEIPT_DESCRIPTION , data.getDescription());
-
+                builder.appendQueryParameter(RECEIPT_USER_ID, data.getUserId());
                 String query = builder.build().getEncodedQuery();
                 addToRequestQueue(query, listener);
 
